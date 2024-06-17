@@ -1,2 +1,7 @@
 bin/
 compile_commands.json
+CMakeUserPresets.json
+.cache
+.ccls-cache
+lib/
+data/
