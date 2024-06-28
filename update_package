@@ -1,3 +1,10 @@
 #!/bin/sh
-conan install . --output-folder=bin --build=missing
+
+build_profile=$1
+if [ -n "$build_profile" ]; then
+  conan install . -pr:b=$build_profile -pr:h=$build_profile --output-folder=bin --build=missing 
+else
+  conan install . --output-folder=bin --build=missing 
+fi
+
 cat conanfile.txt | sed -e '/\[generators\]/,$d' | grep "/" | sed -e 's/\/.*//g' | awk '{print toupper($0)}' | sed -r 's/(.*)/find_package(\1 REQUIRED)/' > package.cmake
