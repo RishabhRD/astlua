@@ -149,10 +149,12 @@ constexpr auto parse_hex_start_state(Iter begin,
 } // namespace __details
 
 // Postcondition:
+//
 // Returns iterator pointing to element after prefix following grammar:
 //   Integer: [0-9]+
 //   Fractional: [0-9]*\.[0-9]+ or [0-9]+\.[0-9]*
 //   Scientific notation: ([0-9]+(\.[0-9]*)?|\.[0-9]+)[eE][+-]?[0-9]+
+//
 // if followed by end iterator or character following is_valid_number_append
 // otherwise nullopt
 template <std::input_iterator Iter>
@@ -166,6 +168,7 @@ constexpr auto parse_decimal(Iter begin, Iter end) -> std::optional<Iter> {
 }
 
 // Postcondition:
+//
 // distance of iterator (begin, parse_decimal(begin, end)) if returned
 // otherwise null
 constexpr auto
@@ -177,10 +180,13 @@ parse_decimal(std::string_view rng) -> std::optional<std::size_t> {
 }
 
 // Postcondition:
+//
 // Returns iterator pointing to element after prefix following grammar:
-//   Integer: [0-9]+
-//   Fractional: [0-9]*\.[0-9]+ or [0-9]+\.[0-9]*
-//   Scientific notation: ([0-9]+(\.[0-9]*)?|\.[0-9]+)[eE][+-]?[0-9]+
+//   Integer: 0[xX][0-9a-fA-F]+
+//   Fractional: 0[xX]([0-9a-fA-F]*\.[0-9a-fA-F]+|[0-9a-fA-F]+\.[0-9a-fA-F]*)
+//   Scientific notation:
+//     0[xX]([0-9a-fA-F]+(\.[0-9a-fA-F]*)?|\.[0-9a-fA-F]+)[pP][+-]?[0-9]+
+//
 // if followed by end iterator or character following is_valid_number_append
 // otherwise nullopt
 template <std::input_iterator Iter>
@@ -194,7 +200,8 @@ constexpr auto parse_hex(Iter begin, Iter end) -> std::optional<Iter> {
 }
 
 // Postcondition:
-// distance of iterator (begin, parse_decimal(begin, end)) if returned
+//
+// distance of iterator (begin, parse_hex(begin, end)) if returned
 // otherwise null
 constexpr auto parse_hex(std::string_view rng) -> std::optional<std::size_t> {
   auto res = parse_hex(begin(rng), end(rng));
