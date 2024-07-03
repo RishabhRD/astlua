@@ -7,24 +7,18 @@
 
 namespace lua {
 namespace lexer {
-template <std::input_iterator Iter>
-constexpr auto parse_prefix(Iter begin, Iter end,
-                            std::string_view prefix) -> std::optional<Iter> {
-  auto [mid_1, mid_2] =
-      std::mismatch(begin, end, std::begin(prefix), std::end(prefix));
-  if (mid_2 != std::end(prefix))
+template <std::input_iterator Iter, std::input_iterator PIter>
+constexpr auto parse_prefix(Iter begin, Iter end, PIter p_begin,
+                            PIter p_end) -> std::optional<Iter> {
+  auto [mid_1, mid_2] = std::mismatch(begin, end, p_begin, p_end);
+  if (mid_2 != p_end)
     return std::nullopt;
   return mid_1;
 }
 
-template <std::forward_iterator Iter, std::input_iterator CIter>
-constexpr auto find_prefix_in_container(Iter begin, Iter end,
-                                        CIter container_begin,
-                                        CIter container_end) {
-  return std::find_if(
-      container_begin, container_end, [begin, end](auto const& token) {
-        return parse_prefix(begin, end, token.second) != std::nullopt;
-      });
+template <std::input_iterator Iter>
+constexpr auto parse_prefix(Iter begin, Iter end, std::string_view prefix) {
+  return parse_prefix(begin, end, std::begin(prefix), std::end(prefix));
 }
 
 template <std::forward_iterator Iter, std::input_iterator CIter>
