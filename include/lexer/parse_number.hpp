@@ -1,23 +1,28 @@
 #pragma once
 
-#include "functional.hpp"
-#include "lexer/char_utils.hpp"
 #include <algorithm>
 #include <array>
 #include <cctype>
 #include <concepts>
 #include <functional>
+#include <ranges>
 #include <string_view>
+#include "functional.hpp"
+#include "lexer/char_utils.hpp"
+#include "token.hpp"
 
 namespace lua {
 namespace lexer {
-namespace __details {
+namespace __parse_number_details {
 
-constexpr bool is_valid_number_append(char c) {
-  constexpr static std::array valid_append{'-', '*', '/', '%', '^', '=',
-                                           '<', '>', ';', '+', ','};
-  return std::isspace(c) || (std::find(begin(valid_append), end(valid_append),
-                                       c) != end(valid_append));
+constexpr auto is_symbol(char c) {
+  constexpr auto symbols = std::views::transform(
+      tokens::symbol_string_rep, [](auto p) { return p.second[0]; });
+  return std::ranges::find(symbols, c) != std::ranges::end(symbols);
+}
+
+constexpr auto is_valid_number_append(char c) {
+  return std::isspace(c) || is_symbol(c);
 }
 
 template <std::input_iterator Iter, std::predicate<char> Pred>
@@ -83,9 +88,8 @@ constexpr auto parse_decimal_start_state(Iter begin,
 }
 
 template <std::forward_iterator Iter>
-constexpr auto
-parse_hex_fractional_state(Iter begin, Iter end,
-                           bool digit_found) -> std::optional<Iter> {
+constexpr auto parse_hex_fractional_state(
+    Iter begin, Iter end, bool digit_found) -> std::optional<Iter> {
   if (begin == end) {
     if (digit_found)
       return begin;
@@ -146,7 +150,7 @@ constexpr auto parse_hex_start_state(Iter begin,
   return parse_hex_integer_state(begin, end);
 }
 
-} // namespace __details
+}  // namespace __parse_number_details
 
 // Postcondition:
 //
@@ -159,10 +163,10 @@ constexpr auto parse_hex_start_state(Iter begin,
 // otherwise nullopt
 template <std::input_iterator Iter>
 constexpr auto parse_decimal(Iter begin, Iter end) -> std::optional<Iter> {
-  auto res = __details::parse_decimal_start_state(begin, end);
+  auto res = __parse_number_details::parse_decimal_start_state(begin, end);
   if (!res)
     return std::nullopt;
-  if (*res == end || __details::is_valid_number_append(**res))
+  if (*res == end || __parse_number_details::is_valid_number_append(**res))
     return res;
   return std::nullopt;
 }
@@ -171,8 +175,8 @@ constexpr auto parse_decimal(Iter begin, Iter end) -> std::optional<Iter> {
 //
 // distance of iterator (begin, parse_decimal(begin, end)) if returned
 // otherwise null
-constexpr auto
-parse_decimal(std::string_view rng) -> std::optional<std::size_t> {
+constexpr auto parse_decimal(std::string_view rng)
+    -> std::optional<std::size_t> {
   auto res = parse_decimal(begin(rng), end(rng));
   if (!res)
     return std::nullopt;
@@ -191,10 +195,10 @@ parse_decimal(std::string_view rng) -> std::optional<std::size_t> {
 // otherwise nullopt
 template <std::input_iterator Iter>
 constexpr auto parse_hex(Iter begin, Iter end) -> std::optional<Iter> {
-  auto res = __details::parse_hex_start_state(begin, end);
+  auto res = __parse_number_details::parse_hex_start_state(begin, end);
   if (!res)
     return std::nullopt;
-  if (*res == end || __details::is_valid_number_append(**res))
+  if (*res == end || __parse_number_details::is_valid_number_append(**res))
     return res;
   return std::nullopt;
 }
@@ -210,5 +214,5 @@ constexpr auto parse_hex(std::string_view rng) -> std::optional<std::size_t> {
   return static_cast<std::size_t>(std::distance(begin(rng), *res));
 }
 
-} // namespace lexer
-} // namespace lua
+}  // namespace lexer
+}  // namespace lua
