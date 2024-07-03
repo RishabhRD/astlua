@@ -5,24 +5,24 @@
 #include <cctype>
 #include <concepts>
 #include <functional>
-#include <ranges>
 #include <string_view>
 #include "functional.hpp"
 #include "lexer/char_utils.hpp"
-#include "token.hpp"
 
 namespace lua {
 namespace lexer {
 namespace __parse_number_details {
-
-constexpr auto is_symbol(char c) {
-  constexpr auto symbols = std::views::transform(
-      tokens::symbol_string_rep, [](auto p) { return p.second[0]; });
-  return std::ranges::find(symbols, c) != std::ranges::end(symbols);
+constexpr auto is_appendable_symbol(char c) {
+  constexpr std::array symbols{
+      '+', '-', '*', '/', '%', '^', '#', '=', '~', '<',
+      '>', '(', ')', '{', '}', '[', ']', ';', ':', ',',
+  };
+  return std::find(std::begin(symbols), std::end(symbols), c) !=
+         std::end(symbols);
 }
 
 constexpr auto is_valid_number_append(char c) {
-  return std::isspace(c) || is_symbol(c);
+  return std::isspace(c) || is_appendable_symbol(c);
 }
 
 template <std::input_iterator Iter, std::predicate<char> Pred>
