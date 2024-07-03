@@ -9,7 +9,7 @@
 #include <functional>
 #include <string_view>
 
-namespace astlua {
+namespace lua {
 namespace lexer {
 namespace __details {
 
@@ -211,4 +211,4 @@ constexpr auto parse_hex(std::string_view rng) -> std::optional<std::size_t> {
 }
 
 } // namespace lexer
-} // namespace astlua
+} // namespace lua

@@ -2,7 +2,7 @@
 #include <string>
 int main() {
   std::string num{"0x.a"};
-  auto res = astlua::lexer::parse_hex(num);
+  auto res = lua::lexer::parse_hex(num);
   if (res.has_value()) {
   }
   return 0;

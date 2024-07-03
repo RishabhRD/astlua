@@ -3,7 +3,8 @@
 #include <array>
 #include <string>
 #include <variant>
-namespace astlua {
+
+namespace lua {
 namespace tokens {
 enum class keyword {
   AND,
@@ -119,26 +120,27 @@ constexpr std::array<std::pair<symbol, std::string_view>, 26> symbol_string_rep{
 struct string {
   std::string value;
 
-  friend bool operator==(string const &, string const &) = default;
+  friend bool operator==(string const&, string const&) = default;
 };
 
 struct identifier {
   std::string value;
 
-  friend bool operator==(identifier const &, identifier const &) = default;
+  friend bool operator==(identifier const&, identifier const&) = default;
 };
 
 struct number {
   std::string value;
 
-  friend bool operator==(number const &, number const &) = default;
+  friend bool operator==(number const&, number const&) = default;
 };
 
 struct illegal {
-  friend bool operator==(illegal const &, illegal const &) = default;
+  friend bool operator==(illegal const&, illegal const&) = default;
 };
 
-} // namespace tokens
+}  // namespace tokens
+
 using token = std::variant<tokens::keyword, tokens::symbol, tokens::string,
                            tokens::identifier, tokens::number, tokens::illegal>;
-} // namespace astlua
+}  // namespace lua

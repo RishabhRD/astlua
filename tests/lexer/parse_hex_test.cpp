@@ -2,7 +2,7 @@
 #include "lexer/parse_number.hpp"
 #include <string_view>
 
-using namespace astlua::lexer;
+using namespace lua::lexer;
 
 auto test_pass_hex(std::string_view number, std::size_t len) {
   auto res = parse_hex(number);

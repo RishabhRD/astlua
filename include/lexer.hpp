@@ -1,6 +1,7 @@
 #pragma once
 
 #include "functional.hpp"
+#include "lexer/parse_number.hpp"
 #include "position.hpp"
 #include "token.hpp"
 #include "token_info.hpp"
@@ -11,7 +12,7 @@
 #include <string_view>
 #include <vector>
 
-namespace astlua {
+namespace lua {
 namespace __lexer_details {
 template <std::input_iterator Iter>
 constexpr auto reduce_position(Iter begin, Iter end, position cur_position) {
@@ -37,9 +38,18 @@ constexpr auto cnt_prefix_whitespace(std::string_view str) -> std::size_t {
       std::ranges::count_if(str, lift(std::isspace)));
 }
 
-constexpr auto is_prefix(std::string_view prefix, std::string_view str)
-    -> bool {
+constexpr auto is_prefix(std::string_view prefix,
+                         std::string_view str) -> bool {
   return prefix.size() <= str.size() && str.substr(0, prefix.size()) == prefix;
+}
+
+constexpr auto extract_number(std::string_view str)
+    -> std::optional<std::pair<token, std::size_t>> {
+  return lexer::parse_decimal(str)                      //
+      .or_else([str] { return lexer::parse_hex(str); }) //
+      .transform([str](auto len) {
+        return std::pair{tokens::number{std::string{str.substr(0, len)}}, len};
+      });
 }
 
 constexpr auto extract_keyword(std::string_view str)
@@ -67,9 +77,10 @@ constexpr auto extract_symbol(std::string_view str)
 
 // Precondition:
 //   - str.size() > 0
-constexpr auto extract_token(std::string_view str)
-    -> std::pair<token, std::size_t> {
+constexpr auto
+extract_token(std::string_view str) -> std::pair<token, std::size_t> {
   return extract_keyword(str)
+      .or_else([str] { return extract_number(str); })
       .or_else([str] { return extract_symbol(str); })
       .value_or(std::pair{tokens::illegal{}, 1});
 }
@@ -97,4 +108,4 @@ constexpr auto lex_source(std::string_view source) -> std::vector<token_info> {
   }
   return tokens;
 }
-} // namespace astlua
+} // namespace lua
