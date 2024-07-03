@@ -1,9 +1,9 @@
-#include "lexer/parse_number.hpp"
 #include <string>
+#include "lexer/parse_keyword.hpp"
+
 int main() {
-  std::string num{"0x.a"};
-  auto res = lua::lexer::parse_hex(num);
-  if (res.has_value()) {
-  }
+  std::string str{"local t = 4;"};
+  auto res = lua::lexer::parse_keyword(std::begin(str), std::end(str));
+  if (res.has_value()) {}
   return 0;
 }
