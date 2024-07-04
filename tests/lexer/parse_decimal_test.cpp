@@ -7,13 +7,13 @@ using namespace lua::lexer;
 
 namespace parse_decimal_test {
 auto pass(std::string_view number, std::size_t len) {
-  auto res = parse_decimal(number);
+  auto res = parse_decimal(std::begin(number), std::end(number));
   req(res.has_value());
-  req(*res == len);
+  req(*res - std::begin(number) == len);
 }
 
 auto fail(std::string_view number) {
-  auto res = parse_decimal(number);
+  auto res = parse_decimal(std::begin(number), std::end(number));
   req(res.has_value() == false);
 }
 }  // namespace parse_decimal_test

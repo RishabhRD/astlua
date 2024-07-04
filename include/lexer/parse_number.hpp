@@ -173,18 +173,6 @@ constexpr auto parse_decimal(Iter begin, Iter end) -> std::optional<Iter> {
 
 // Postcondition:
 //
-// distance of iterator (begin, parse_decimal(begin, end)) if returned
-// otherwise null
-constexpr auto parse_decimal(std::string_view rng)
-    -> std::optional<std::size_t> {
-  auto res = parse_decimal(begin(rng), end(rng));
-  if (!res)
-    return std::nullopt;
-  return static_cast<std::size_t>(std::distance(begin(rng), *res));
-}
-
-// Postcondition:
-//
 // Returns iterator pointing to element after prefix following grammar:
 //   Integer: 0[xX][0-9a-fA-F]+
 //   Fractional: 0[xX]([0-9a-fA-F]*\.[0-9a-fA-F]+|[0-9a-fA-F]+\.[0-9a-fA-F]*)
@@ -201,17 +189,6 @@ constexpr auto parse_hex(Iter begin, Iter end) -> std::optional<Iter> {
   if (*res == end || __parse_number_details::is_valid_number_append(**res))
     return res;
   return std::nullopt;
-}
-
-// Postcondition:
-//
-// distance of iterator (begin, parse_hex(begin, end)) if returned
-// otherwise null
-constexpr auto parse_hex(std::string_view rng) -> std::optional<std::size_t> {
-  auto res = parse_hex(begin(rng), end(rng));
-  if (!res)
-    return std::nullopt;
-  return static_cast<std::size_t>(std::distance(begin(rng), *res));
 }
 
 }  // namespace lexer
