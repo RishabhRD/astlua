@@ -16,6 +16,8 @@ constexpr auto parse_prefix(Iter begin, Iter end, PIter p_begin,
   return mid_1;
 }
 
+// Postcondition:
+//   - parses if prefix of [begin, end) == prefix
 template <std::input_iterator Iter>
 constexpr auto parse_prefix(Iter begin, Iter end, std::string_view prefix) {
   return parse_prefix(begin, end, std::begin(prefix), std::end(prefix));

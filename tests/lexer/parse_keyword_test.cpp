@@ -2,7 +2,6 @@
 #include <ranges>
 #include <string_view>
 #include "doctest.hpp"
-#include "token.hpp"
 
 namespace parse_keyword_test {
 auto pass(std::string_view str, std::size_t len) {
@@ -39,7 +38,7 @@ test("parse_keyword test") {
   fail("<");
 
   auto keywords =
-      std::views::transform(lua::tokens::keyword_string_rep,
+      std::views::transform(lua::lexer::ordered_keyword_string_rep,
                             [](auto const& rep) { return rep.second; });
   std::ranges::for_each(keywords, [](auto s) { pass(s); });
 }

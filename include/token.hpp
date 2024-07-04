@@ -30,33 +30,6 @@ enum class keyword {
   WHILE,
 };
 
-// Invariant:
-//   - keyword with common prefix have relative descending order
-constexpr std::array<std::pair<keyword, std::string_view>, 21>
-    keyword_string_rep{
-        std::pair{keyword::AND, "and"},
-        {keyword::BREAK, "break"},
-        {keyword::DO, "do"},
-        {keyword::ELSEIF, "elseif"},
-        {keyword::ELSE, "else"},
-        {keyword::END, "end"},
-        {keyword::FALSE, "false"},
-        {keyword::FOR, "for"},
-        {keyword::FUNCTION, "function"},
-        {keyword::IF, "if"},
-        {keyword::IN, "in"},
-        {keyword::LOCAL, "local"},
-        {keyword::NIL, "nil"},
-        {keyword::NOT, "not"},
-        {keyword::OR, "or"},
-        {keyword::REPEAT, "repeat"},
-        {keyword::RETURN, "return"},
-        {keyword::THEN, "then"},
-        {keyword::TRUE, "true"},
-        {keyword::UNTIL, "until"},
-        {keyword::WHILE, "while"},
-    };
-
 enum class symbol {
   PLUS,
   MINUS,
