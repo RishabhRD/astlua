@@ -2,8 +2,6 @@
 
 #include <algorithm>
 #include <cctype>
-#include <functional>
-#include "functional.hpp"
 #include "lexer/char_utils.hpp"
 
 namespace lua {
@@ -21,13 +19,13 @@ constexpr auto parse_exponent_state(Iter begin,
   if (!is_digit(*begin)) {
     return std::nullopt;
   }
-  return std::find_if(begin, end, std::not_fn(is_digit));
+  return std::find_if_not(begin, end, is_digit);
 }
 
 template <std::input_iterator Iter>
 constexpr auto parse_decimal_fractional_state(Iter begin,
                                               Iter end) -> std::optional<Iter> {
-  begin = std::find_if(begin, end, std::not_fn(lift(is_digit)));
+  begin = std::find_if_not(begin, end, is_digit);
   if (begin == end)
     return begin;
   if (*begin == 'e' || *begin == 'E')
@@ -38,7 +36,7 @@ constexpr auto parse_decimal_fractional_state(Iter begin,
 template <std::input_iterator Iter>
 constexpr auto parse_decimal_integer_state(Iter begin,
                                            Iter end) -> std::optional<Iter> {
-  begin = std::find_if(begin, end, std::not_fn(lift(is_digit)));
+  begin = std::find_if_not(begin, end, is_digit);
   if (begin == end)
     return begin;
   if (*begin == '.')
@@ -70,7 +68,7 @@ constexpr auto parse_hex_fractional_state(
     return std::nullopt;
   }
 
-  auto tmp_iter = std::find_if(begin, end, std::not_fn(lift(is_hex_digit)));
+  auto tmp_iter = std::find_if_not(begin, end, is_hex_digit);
   digit_found = digit_found || (begin != tmp_iter);
   begin = tmp_iter;
 
@@ -89,7 +87,7 @@ constexpr auto parse_hex_integer_state(Iter begin,
                                        Iter end) -> std::optional<Iter> {
   if (begin == end)
     return std::nullopt;
-  auto tmp_iter = std::find_if(begin, end, std::not_fn(lift(is_hex_digit)));
+  auto tmp_iter = std::find_if_not(begin, end, is_hex_digit);
 
   auto const digit_found = (begin != tmp_iter);
   begin = tmp_iter;
