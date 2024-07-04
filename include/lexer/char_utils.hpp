@@ -1,8 +1,5 @@
 #pragma once
 
-#include <concepts>
-#include <utility>
-
 namespace lua {
 constexpr auto is_digit(char c) {
   return c >= '0' && c <= '9';
@@ -21,10 +18,11 @@ constexpr auto is_alphanumeric(char c) {
   return is_alpha(c) || is_digit(c);
 }
 
-template <std::predicate<char> Pred>
-constexpr auto or_(Pred pred) {
-  return [pred_ = std::move(pred)](auto c) {
-    return pred_(c) || c == '_';
-  };
+constexpr auto is_alpha_or_(char c) {
+  return is_alpha(c) || c == '_';
+}
+
+constexpr auto is_alphanumeric_or_(char c) {
+  return is_alphanumeric(c) || c == '_';
 }
 }  // namespace lua
