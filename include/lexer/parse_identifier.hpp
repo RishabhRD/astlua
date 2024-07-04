@@ -7,6 +7,9 @@
 
 namespace lua {
 namespace lexer {
+// Postcondition:
+// - Parses if [begin, end) starts with alphabet or _ till contiguous alphanumeric
+//   or _
 template <std::input_iterator Iter>
 constexpr auto parse_identifier(Iter begin, Iter end) -> std::optional<Iter> {
   if (begin == end || (!is_alpha_or_(*begin)))
