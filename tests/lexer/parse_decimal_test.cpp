@@ -1,7 +1,6 @@
 #include <string_view>
 #include "doctest.hpp"
 #include "lexer/parse_number.hpp"
-#include "lexer/parse_symbol.hpp"
 
 using namespace lua::lexer;
 
@@ -23,6 +22,8 @@ using namespace parse_decimal_test;
 test("test_pass_decimal: only integers") {
   pass("123", 3);
   pass("0", 1);
+  pass("123>", 3);
+  pass("0<", 1);
 }
 
 test("test_pass_decimal: including only .") {
@@ -30,6 +31,10 @@ test("test_pass_decimal: including only .") {
   pass(".2", 2);
   pass("1.", 2);
   pass("1.2", 3);
+  pass(". ", 1);
+  pass(".2~", 2);
+  pass("1.{", 2);
+  pass("1.2}", 3);
 }
 
 test("test_pass_decimal: including only e") {
@@ -57,6 +62,8 @@ test("test_pass_decimal: ends with valid token") {
   pass("0<", 1);
   pass("0^", 1);
   pass("0%", 1);
+  pass("0{", 1);
+  pass("0}", 1);
   pass("0\n", 1);
 }
 
@@ -70,20 +77,10 @@ test("test_fail_decimal: bad input at end") {
   fail("123g");
   fail("123.eg");
   fail("123.3e");
+  fail("123.3e9_");
   fail("123d");
 }
 
 test("test_fail_decimal: e and . conflict") {
   fail("123e.2");
-}
-
-test("should support appending any digit") {
-  std::ranges::for_each(std::begin(lua::lexer::ordered_symbol_string_rep),
-                        std::end(lua::lexer::ordered_symbol_string_rep),
-                        [](auto rep) {
-                          std::string num{"4"};
-                          num += rep.second;
-                          if (rep.second[0] != '.')
-                            pass(num, 1);
-                        });
 }

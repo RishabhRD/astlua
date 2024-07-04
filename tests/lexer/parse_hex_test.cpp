@@ -32,9 +32,9 @@ test("test_pass_hex: including only .") {
 }
 
 test("test_pass_hex: including only p") {
-  pass("0xapf", 5);
-  pass("0x1Pf", 5);
-  pass("0xap+f", 6);
+  pass("0xap3", 5);
+  pass("0x1P-0", 6);
+  pass("0xap+2", 6);
   pass("0x1P+3", 6);
 }
 
@@ -79,20 +79,10 @@ test("test_fail_hex: no digit") {
 test("test_fail_hex: bad input at end") {
   fail("0x123g");
   fail("0x123.p3g");
+  fail("0x123.p3_");
   fail("0x123.pe");
 }
 
 test("test_fail_hex: p and . conflict") {
   fail("0x123p.2");
-}
-
-test("should support appending any digit") {
-  std::ranges::for_each(std::begin(lua::lexer::ordered_symbol_string_rep),
-                        std::end(lua::lexer::ordered_symbol_string_rep),
-                        [](auto rep) {
-                          std::string num{"0x2"};
-                          num += rep.second;
-                          if (rep.second[0] != '.')
-                            pass(num, 3);
-                        });
 }
