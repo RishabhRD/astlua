@@ -27,7 +27,12 @@ test("parse_keyword test") {
   pass("local t = 4", 5);
   pass("elseif\nsomething", 6);
   pass("else something", 4);
+  pass("local--something", 5);
+  pass("local.", 5);
+  pass("local--[[something]]", 5);
+  pass("local--\n[[something", 5);
   fail("elseifs ");
+  fail("elseif9 ");
   fail("el ");
   fail("el");
   fail("");
