@@ -1,7 +1,7 @@
 #include <string_view>
 #include "doctest.hpp"
 #include "lexer/parse_number.hpp"
-#include "token.hpp"
+#include "lexer/parse_symbol.hpp"
 
 using namespace lua::lexer;
 
@@ -78,8 +78,9 @@ test("test_fail_decimal: e and . conflict") {
 }
 
 test("should support appending any digit") {
-  std::ranges::for_each(std::begin(lua::tokens::symbol_string_rep),
-                        std::end(lua::tokens::symbol_string_rep), [](auto rep) {
+  std::ranges::for_each(std::begin(lua::lexer::ordered_symbol_string_rep),
+                        std::end(lua::lexer::ordered_symbol_string_rep),
+                        [](auto rep) {
                           std::string num{"4"};
                           num += rep.second;
                           if (rep.second[0] != '.')
