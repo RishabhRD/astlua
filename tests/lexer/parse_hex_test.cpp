@@ -1,7 +1,6 @@
 #include <string_view>
 #include "doctest.hpp"
 #include "lexer/parse_number.hpp"
-#include "lexer/parse_symbol.hpp"
 
 using namespace lua::lexer;
 
