@@ -45,6 +45,8 @@ constexpr std::array<std::pair<symbol, std::string_view>, 26>
 
 using __parse_symbol_details::ordered_symbol_string_rep;
 
+// Postcondition:
+//   - parses first matching symbol in ordered_symbol_string_rep
 template <std::forward_iterator Iter>
 constexpr auto parse_symbol(Iter begin, Iter end) -> std::optional<Iter> {
   auto symbols = std::views::transform(
