@@ -5,9 +5,11 @@
 
 namespace parse_symbol_test {
 auto pass(std::string_view str, std::size_t len) {
-  auto itr = lua::lexer::parse_symbol(std::begin(str), std::end(str));
-  req(itr.has_value());
-  req((*itr - std::begin(str)) == len);
+  sub(str.data()) {
+    auto itr = lua::lexer::parse_symbol(std::begin(str), std::end(str));
+    req(itr.has_value());
+    req((*itr - std::begin(str)) == len);
+  }
 }
 
 auto pass(std::string_view symbol) {
@@ -15,8 +17,10 @@ auto pass(std::string_view symbol) {
 }
 
 auto fail(std::string_view str) {
-  auto itr = lua::lexer::parse_symbol(std::begin(str), std::end(str));
-  req(itr.has_value() == false);
+  sub(str.data()) {
+    auto itr = lua::lexer::parse_symbol(std::begin(str), std::end(str));
+    req(itr.has_value() == false);
+  }
 }
 }  // namespace parse_symbol_test
 

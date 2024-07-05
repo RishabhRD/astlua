@@ -4,7 +4,7 @@
 
 namespace parse_long_string_test {
 auto pass(std::string_view str, std::size_t len) {
-  SUBCASE(str.data()) {
+  sub(str.data()) {
     auto res = lua::lexer::parse_long_string(std::begin(str), std::end(str));
     req(res.has_value());
     req(*res - std::begin(str) == len);
@@ -12,7 +12,7 @@ auto pass(std::string_view str, std::size_t len) {
 }
 
 auto fail(std::string_view str) {
-  SUBCASE(str.data()) {
+  sub(str.data()) {
     auto res = lua::lexer::parse_long_string(std::begin(str), std::end(str));
     req(res.has_value() == false);
   }

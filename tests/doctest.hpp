@@ -2,3 +2,4 @@
 
 #define test TEST_CASE
 #define req REQUIRE
+#define sub SUBCASE

@@ -4,14 +4,18 @@
 
 namespace parse_identifier_test {
 auto pass(std::string_view str, std::size_t len) {
-  auto itr = lua::lexer::parse_identifier(std::begin(str), std::end(str));
-  req(itr.has_value());
-  req((*itr - std::begin(str)) == len);
+  sub(str.data()) {
+    auto itr = lua::lexer::parse_identifier(std::begin(str), std::end(str));
+    req(itr.has_value());
+    req((*itr - std::begin(str)) == len);
+  }
 }
 
 auto fail(std::string_view str) {
-  auto itr = lua::lexer::parse_identifier(std::begin(str), std::end(str));
-  req(itr.has_value() == false);
+  sub(str.data()) {
+    auto itr = lua::lexer::parse_identifier(std::begin(str), std::end(str));
+    req(itr.has_value() == false);
+  }
 }
 }  // namespace parse_identifier_test
 
