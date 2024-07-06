@@ -1,7 +1,6 @@
 #pragma once
 
 #include <array>
-#include <ostream>
 #include "lexer/token.hpp"
 
 namespace lua {
