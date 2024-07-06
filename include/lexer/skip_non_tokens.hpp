@@ -22,6 +22,7 @@ constexpr auto parse_comment(Iter begin, Iter end) -> std::optional<Iter> {
   ++begin;
   if (begin == end || *begin != '-')
     return std::nullopt;
+  ++begin;
   auto long_string_itr = parse_long_string(begin, end);
   if (long_string_itr != std::nullopt)
     return long_string_itr;
