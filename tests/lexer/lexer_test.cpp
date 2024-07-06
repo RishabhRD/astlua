@@ -47,9 +47,9 @@ test("tokenize") {
   pass("local --t =\n\r--[[hello]] t = [[hello]]\r\n  @",
        {
            token_info{keyword::LOCAL, {0, 0}},
-           token_info{identifier{"t"}, {2, 13}},
-           token_info{symbol::ASSIGN, {2, 15}},
-           token_info{string{"[[hello]]"}, {2, 17}},
+           token_info{identifier{"t"}, {2, 12}},
+           token_info{symbol::ASSIGN, {2, 14}},
+           token_info{string{"[[hello]]"}, {2, 16}},
            token_info{illegal{'@'}, {3, 2}},
        });
 }

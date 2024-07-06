@@ -21,13 +21,14 @@ constexpr auto reduce_position(Iter begin, Iter end, position_t cur_position) {
       cur_position.col = 0;
       ++cur_position.line;
     } else if (*begin == '\n') {
-      if (prev == '\r')
-        continue;
-      cur_position.col = 0;
-      ++cur_position.line;
+      if (prev != '\r') {
+        cur_position.col = 0;
+        ++cur_position.line;
+      }
     } else {
       ++cur_position.col;
     }
+    prev = *begin;
     ++begin;
   }
   return cur_position;
