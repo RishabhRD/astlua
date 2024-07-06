@@ -45,6 +45,22 @@ constexpr std::array<std::pair<symbol, std::string_view>, 26>
 
 using __parse_symbol_details::ordered_symbol_string_rep;
 
+// Precondition:
+//   - [begin, end) is a valid symbol string
+// Postcondition:
+//   - Returns the symbol represented by [begin, end) in ordered_symbol_string_rep
+template <std::forward_iterator Iter>
+constexpr auto to_symbol(Iter begin, Iter end) -> lua::tokens::symbol {
+  return std::ranges::find_if(ordered_symbol_string_rep,
+                              [begin, end](auto const& rep) {
+                                return std::equal(begin, end,
+                                                  std::begin(rep.second),
+                                                  std::end(rep.second));
+                              })
+      ->first;
+  ;
+}
+
 // Postcondition:
 //   - parses first matching symbol in ordered_symbol_string_rep
 template <std::forward_iterator Iter>

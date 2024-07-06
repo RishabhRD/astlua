@@ -42,6 +42,22 @@ constexpr std::array<std::pair<keyword, std::string_view>, 21>
 
 using __parse_keyword_detail::ordered_keyword_string_rep;
 
+// Precondition:
+//   - [begin, end) is a valid keyword string
+// Postcondition:
+//   - Returns the keyword represented by [begin, end) in ordered_keyword_string_rep
+template <std::forward_iterator Iter>
+constexpr auto to_keyword(Iter begin, Iter end) -> lua::tokens::keyword {
+  return std::ranges::find_if(ordered_keyword_string_rep,
+                              [begin, end](auto const& rep) {
+                                return std::equal(begin, end,
+                                                  std::begin(rep.second),
+                                                  std::end(rep.second));
+                              })
+      ->first;
+  ;
+}
+
 // Postcondition:
 //   - parses if alphanumeric including _ prefix is a valid keyword
 template <std::forward_iterator Iter>
