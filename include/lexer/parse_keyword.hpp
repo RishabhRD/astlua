@@ -44,6 +44,7 @@ using __parse_keyword_detail::ordered_keyword_string_rep;
 
 // Precondition:
 //   - [begin, end) is a valid keyword string
+//
 // Postcondition:
 //   - Returns the keyword represented by [begin, end) in ordered_keyword_string_rep
 template <std::forward_iterator Iter>

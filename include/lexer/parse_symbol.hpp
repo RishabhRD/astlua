@@ -47,6 +47,7 @@ using __parse_symbol_details::ordered_symbol_string_rep;
 
 // Precondition:
 //   - [begin, end) is a valid symbol string
+//
 // Postcondition:
 //   - Returns the symbol represented by [begin, end) in ordered_symbol_string_rep
 template <std::forward_iterator Iter>
