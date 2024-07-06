@@ -5,8 +5,8 @@
 
 namespace lua {
 struct token_info {
-  token token;
-  position pos;
+  token_t token;
+  position_t position;
 
   friend bool operator==(token_info const&, token_info const&) = default;
 };

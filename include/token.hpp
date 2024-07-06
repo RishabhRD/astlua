@@ -84,6 +84,7 @@ struct illegal {
 
 }  // namespace tokens
 
-using token = std::variant<tokens::keyword, tokens::symbol, tokens::string,
-                           tokens::identifier, tokens::number, tokens::illegal>;
+using token_t =
+    std::variant<tokens::keyword, tokens::symbol, tokens::string,
+                 tokens::identifier, tokens::number, tokens::illegal>;
 }  // namespace lua
