@@ -106,26 +106,5 @@ constexpr auto to_symbol(Iter begin, Iter end) -> lua::lexer::tokens::symbol {
   ;
 }
 
-namespace tokens {
-inline std::ostream& operator<<(std::ostream& os,
-                                lua::lexer::tokens::keyword k) {
-  os << "keyword{";
-  os << std::ranges::find_if(ordered_keyword_string_rep, [k](auto const& rep) {
-          return rep.first == k;
-        })->second;
-  os << "}";
-  return os;
-}
-
-inline std::ostream& operator<<(std::ostream& os,
-                                lua::lexer::tokens::symbol k) {
-  os << "symbol{";
-  os << std::ranges::find_if(ordered_symbol_string_rep, [k](auto const& rep) {
-          return rep.first == k;
-        })->second;
-  os << "}";
-  return os;
-}
-}  // namespace tokens
 }  // namespace lexer
 }  // namespace lua

@@ -62,8 +62,8 @@ enum class symbol {
   VARARG,
 };
 
-inline std::ostream& operator<<(std::ostream&, keyword);
-inline std::ostream& operator<<(std::ostream&, symbol);
+std::ostream& operator<<(std::ostream&, keyword);
+std::ostream& operator<<(std::ostream&, symbol);
 
 struct string {
   std::string value;
@@ -115,17 +115,6 @@ using token_t =
     std::variant<tokens::keyword, tokens::symbol, tokens::string,
                  tokens::identifier, tokens::number, tokens::illegal>;
 
-inline std::ostream& operator<<(std::ostream& os, token_t const& token_var) {
-  std::visit(nostd::overload{
-                 [&os](tokens::keyword const& x) { os << x; },
-                 [&os](tokens::symbol const& x) { os << x; },
-                 [&os](tokens::string const& x) { os << x; },
-                 [&os](tokens::identifier const& x) { os << x; },
-                 [&os](tokens::number const& x) { os << x; },
-                 [&os](tokens::illegal const& x) { os << x; },
-             },
-             token_var);
-  return os;
-}
+std::ostream& operator<<(std::ostream& os, token_t const& token_var);
 }  // namespace lexer
 }  // namespace lua

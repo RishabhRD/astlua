@@ -34,6 +34,7 @@ test("only single line comment") {
 
 test("only multiline comments") {
   pass("--[[]]", 6);
+  pass("--[[]]f", 6);
   pass("--[[]]--[[]]", 12);
   pass("--[[h]]--[[]]", 13);
   pass("--[[h]]--[[j]]", 14);
@@ -41,6 +42,7 @@ test("only multiline comments") {
   pass("--[=[]=]--[==[]==]", 18);
   pass("--[=[h]=]--[=[]=]", 17);
   pass("--[===[h]===]--[[j]]", 20);
+  pass(" --t =\n\r--[[hello]] t = [[hello]]\r\n  @", 20);
 }
 
 test("all non tokens mixed") {

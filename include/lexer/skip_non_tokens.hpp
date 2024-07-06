@@ -32,6 +32,8 @@ constexpr auto parse_comment(Iter begin, Iter end) -> std::optional<Iter> {
 }
 }  // namespace __skip_non_tokens_details
 
+// Postcondition:
+//   - Returns an iterator to first non-comment, non-whitespace character
 template <std::forward_iterator Iter>
 constexpr auto skip_non_tokens(Iter begin, Iter end) -> Iter {
   using namespace __skip_non_tokens_details;
