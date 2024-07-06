@@ -77,6 +77,8 @@ struct number {
 };
 
 struct illegal {
+  char value;
+
   friend bool operator==(illegal const&, illegal const&) = default;
 };
 
