@@ -28,6 +28,7 @@ constexpr auto reduce_position(Iter begin, Iter end, position_t cur_position) {
     } else {
       ++cur_position.col;
     }
+    ++begin;
   }
   return cur_position;
 }
@@ -47,8 +48,8 @@ constexpr auto reduce_position(Iter begin, Iter end, position_t cur_position) {
 //       - illegal
 template <std::forward_iterator Iter>
 constexpr auto extract_token(Iter begin,
-                             Iter end) -> std::pair<lua::token_t, Iter> {
-  using namespace lua::tokens;
+                             Iter end) -> std::pair<lua::lexer::token_t, Iter> {
+  using namespace lua::lexer::tokens;
 
   auto res = parse_keyword(begin, end);
   if (res)
@@ -82,8 +83,13 @@ constexpr auto extract_token(Iter begin,
   return {illegal{illegal_char}, ++begin};
 }
 
-template <std::forward_iterator Iter, std::forward_iterator Out>
-  requires std::same_as<std::iter_value_t<Out>, token_info>
+// Postcondition:
+//   - for range `[begin, end)` tokenizes the content with `extract_token`
+//     sequentially from begin to end with skipping any whitespace or comment
+//     and put the `token_info` into `out`
+//   - `token_info` represents the token with its position in `[begin, end)` in
+//     term of 2D string separated by new line character
+template <std::forward_iterator Iter, std::output_iterator<token_info> Out>
 constexpr auto tokenize(Iter begin, Iter end, Out out) -> void {
   position_t cur_position{
       .line = 0,
@@ -93,7 +99,7 @@ constexpr auto tokenize(Iter begin, Iter end, Out out) -> void {
   while (begin != end) {
     auto cur = skip_non_tokens(begin, end);
     cur_position = reduce_position(begin, cur, cur_position);
-    begin = cur_position;
+    begin = cur;
 
     auto [token, new_begin] = extract_token(begin, end);
     *out = token_info{std::move(token), cur_position};

@@ -4,60 +4,10 @@
 #include <iterator>
 #include <ranges>
 #include "lexer/char_utils.hpp"
-#include "token.hpp"
+#include "lexer/enum_rep.hpp"
 
 namespace lua {
 namespace lexer {
-
-namespace __parse_keyword_detail {
-using namespace lua::tokens;
-
-// Invariant:
-//   keywords are ordered such that higher priority keywords come first
-constexpr std::array<std::pair<keyword, std::string_view>, 21>
-    ordered_keyword_string_rep{
-        std::pair{keyword::AND, "and"},
-        {keyword::BREAK, "break"},
-        {keyword::DO, "do"},
-        {keyword::ELSEIF, "elseif"},
-        {keyword::ELSE, "else"},
-        {keyword::END, "end"},
-        {keyword::FALSE, "false"},
-        {keyword::FOR, "for"},
-        {keyword::FUNCTION, "function"},
-        {keyword::IF, "if"},
-        {keyword::IN, "in"},
-        {keyword::LOCAL, "local"},
-        {keyword::NIL, "nil"},
-        {keyword::NOT, "not"},
-        {keyword::OR, "or"},
-        {keyword::REPEAT, "repeat"},
-        {keyword::RETURN, "return"},
-        {keyword::THEN, "then"},
-        {keyword::TRUE, "true"},
-        {keyword::UNTIL, "until"},
-        {keyword::WHILE, "while"},
-    };
-}  // namespace __parse_keyword_detail
-
-using __parse_keyword_detail::ordered_keyword_string_rep;
-
-// Precondition:
-//   - [begin, end) is a valid keyword string
-//
-// Postcondition:
-//   - Returns the keyword represented by [begin, end) in ordered_keyword_string_rep
-template <std::forward_iterator Iter>
-constexpr auto to_keyword(Iter begin, Iter end) -> lua::tokens::keyword {
-  return std::ranges::find_if(ordered_keyword_string_rep,
-                              [begin, end](auto const& rep) {
-                                return std::equal(begin, end,
-                                                  std::begin(rep.second),
-                                                  std::end(rep.second));
-                              })
-      ->first;
-  ;
-}
 
 // Postcondition:
 //   - parses if alphanumeric including _ prefix is a valid keyword

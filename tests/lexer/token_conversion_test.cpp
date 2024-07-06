@@ -1,10 +1,9 @@
 #include <string_view>
 #include "doctest.hpp"
-#include "lexer/parse_keyword.hpp"
-#include "lexer/parse_symbol.hpp"
+#include "lexer/enum_rep.hpp"
 
 test("to_keyword") {
-  using namespace lua::tokens;
+  using namespace lua::lexer::tokens;
   auto pass = [](std::string_view token, auto keyword) {
     sub(token.data()) {
       std::string_view rep{token};
@@ -35,7 +34,7 @@ test("to_keyword") {
 }
 
 test("to_symbol") {
-  using namespace lua::tokens;
+  using namespace lua::lexer::tokens;
   auto pass = [](std::string_view token, auto res) {
     sub(token.data()) {
       std::string_view rep{token};

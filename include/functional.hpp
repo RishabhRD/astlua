@@ -1,10 +1,17 @@
 #pragma once
 
-namespace lua {
-#define lift(func)                                                             \
-  [](auto &&...__args__) noexcept(                                             \
-      noexcept(func(std::forward<decltype(__args__)>(__args__)...)))           \
-      -> decltype(func(std::forward<decltype(__args__)>(__args__)...)) {       \
-    return func(std::forward<decltype(__args__)>(__args__)...);                \
+namespace nostd {
+#define lift(func)                                                       \
+  [](auto&&... __args__) noexcept(                                       \
+      noexcept(func(std::forward<decltype(__args__)>(__args__)...)))     \
+      -> decltype(func(std::forward<decltype(__args__)>(__args__)...)) { \
+    return func(std::forward<decltype(__args__)>(__args__)...);          \
   }
-} // namespace lua
+
+template <class... Ts>
+struct overload : Ts... {
+  using Ts::operator()...;
+};
+template <class... Ts>
+overload(Ts...) -> overload<Ts...>;
+}  // namespace nostd

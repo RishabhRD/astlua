@@ -1,13 +1,11 @@
+#include <lexer/token_info.hpp>
 #include <string>
-#include "lexer/parse_string.hpp"
+#include <vector>
+#include "lexer/lexer.hpp"
 
 int main() {
-  std::string str{"'h'"};
-  auto res = lua::lexer::parse_short_string(std::begin(str), std::end(str));
-  if (res.has_value()) {
-    std::string r{std::begin(str), *res};
-    std::string e{*res, std::end(str)};
-    std::string{};
-  }
-  return 0;
+  std::string str{"local --t =\n\r--[[hello]] t = [[hello]]\r\n  @"};
+  std::vector<lua::lexer::token_info> tokens;
+  lua::lexer::tokenize(std::begin(str), std::end(str),
+                       std::back_inserter(tokens));
 }
