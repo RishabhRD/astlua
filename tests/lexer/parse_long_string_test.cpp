@@ -32,6 +32,7 @@ test("pass cases which doesn't include =") {
   pass("[[hello\n] ]][] ", 12);
   pass("[[]]   ", 4);
   pass("[[   ]]]]", 7);
+  pass("[[   \\]]]]", 8);
 }
 
 test("pass cases which includes =") {
