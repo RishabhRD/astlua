@@ -25,4 +25,8 @@ constexpr auto is_alpha_or_(char c) {
 constexpr auto is_alphanumeric_or_(char c) {
   return is_alphanumeric(c) || c == '_';
 }
+
+constexpr auto is_newline(char c) {
+  return c == '\n' || c == '\r';
+}
 }  // namespace lua
