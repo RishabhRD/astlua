@@ -25,15 +25,7 @@ std::ostream& operator<<(std::ostream& os, lua::lexer::tokens::symbol k) {
 }  // namespace tokens
 
 std::ostream& operator<<(std::ostream& os, token_t const& token_var) {
-  std::visit(nostd::overload{
-                 [&os](tokens::keyword const& x) { os << x; },
-                 [&os](tokens::symbol const& x) { os << x; },
-                 [&os](tokens::string const& x) { os << x; },
-                 [&os](tokens::identifier const& x) { os << x; },
-                 [&os](tokens::number const& x) { os << x; },
-                 [&os](tokens::illegal const& x) { os << x; },
-             },
-             token_var);
+  std::visit([&os](auto const& x) { os << x; }, token_var);
   return os;
 }
 }  // namespace lexer
