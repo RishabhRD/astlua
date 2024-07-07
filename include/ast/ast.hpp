@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iterator>
 #include <memory>
 #include <optional>
 #include <ostream>
@@ -73,8 +74,20 @@ template <typename T>
 struct list_1 {
   T first;
   std::vector<T> more;
+
+  list_1(T first_, std::vector<T> more_)
+      : first(std::move(first_)), more(std::move(more_)) {}
+
+  list_1(T first_) : first(std::move(first_)), more() {}
+
   friend bool operator==(list_1 const&, list_1 const&) = default;
 };
+
+template <typename T>
+list_1(T, std::vector<T>) -> list_1<T>;
+
+template <typename T>
+list_1(T) -> list_1<T>;
 
 // Variants and Expressions
 struct expression_var {
@@ -340,8 +353,6 @@ std::ostream& operator<<(std::ostream&, return_stat const&);
 std::ostream& operator<<(std::ostream&, block const&);
 std::ostream& operator<<(std::ostream&, unary_op const&);
 std::ostream& operator<<(std::ostream&, binary_op const&);
-template <typename T>
-std::ostream& operator<<(std::ostream&, list_1<T> const&);
 std::ostream& operator<<(std::ostream&, expression_var const&);
 std::ostream& operator<<(std::ostream&, name_var const&);
 std::ostream& operator<<(std::ostream&, var const&);
@@ -377,4 +388,14 @@ std::ostream& operator<<(std::ostream&, for_in_stat const&);
 std::ostream& operator<<(std::ostream&, fn_decl_stat const&);
 std::ostream& operator<<(std::ostream&, local_fn_decl_stat const&);
 std::ostream& operator<<(std::ostream&, var_decl_stat const&);
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, list_1<T> const& lst) {
+  os << "[ ";
+  os << lst.first << " ";
+  for (auto const& x : lst.more)
+    os << x << " ";
+  os << "]";
+  return os;
+}
 }  // namespace lua::ast

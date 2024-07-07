@@ -62,6 +62,7 @@ test("maybe") {
 
 test("zero_or_more") {
   auto parser = zero_or_more(parse_false);
+  pass("empty", {}, parser, std::vector<ast::false_t>{}, 0);
   pass("0 false", {token::keyword::TRUE}, parser, std::vector<ast::false_t>{},
        0);
   pass("1 false", {token::keyword::FALSE, token::keyword::TRUE}, parser,
@@ -69,4 +70,15 @@ test("zero_or_more") {
   pass("2 false",
        {token::keyword::FALSE, token::keyword::FALSE, token::keyword::TRUE},
        parser, std::vector{ast::false_t{}, ast::false_t{}}, 2);
+}
+
+test("one_or_more") {
+  auto parser = one_or_more(parse_false);
+  fail("empty", {}, parser);
+  fail("0 false", {token::keyword::TRUE}, parser);
+  pass("1 false", {token::keyword::FALSE, token::keyword::TRUE}, parser,
+       ast::list_1{ast::false_t{}}, 1);
+  pass("2 false",
+       {token::keyword::FALSE, token::keyword::FALSE, token::keyword::TRUE},
+       parser, ast::list_1{ast::false_t{}, {ast::false_t{}}}, 2);
 }

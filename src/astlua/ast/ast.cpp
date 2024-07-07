@@ -117,16 +117,6 @@ std::ostream& operator<<(std::ostream& os, binary_op const& op) {
   return os;
 }
 
-template <typename T>
-std::ostream& operator<<(std::ostream& os, list_1<T> const& lst) {
-  os << "[ ";
-  os << lst.first << " ";
-  std::copy(lst.more.begin(), lst.more.end(),
-            std::ostream_iterator<T>(os, " "));
-  os << "]";
-  return os;
-}
-
 std::ostream& operator<<(std::ostream& os, expression_var const& x) {
   os << "expression_var{field: ";
   print(os, x.field);
