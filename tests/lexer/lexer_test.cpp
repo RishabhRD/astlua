@@ -2,11 +2,11 @@
 #include <iterator>
 #include <vector>
 #include "doctest.hpp"
-#include "lexer/token.hpp"
-#include "lexer/token_info.hpp"
+#include "token/token.hpp"
+#include "token/token_info.hpp"
 
 test("extract_token") {
-  auto pass = [](std::string_view str, lua::lexer::token_t expected_token,
+  auto pass = [](std::string_view str, lua::token::token_t expected_token,
                  std::size_t expected_len) {
     sub(str.data()) {
       auto [token, next_iter] =
@@ -18,7 +18,7 @@ test("extract_token") {
     }
   };
 
-  using namespace lua::lexer::tokens;
+  using namespace lua::token;
   pass("[[hello]]local", string{"[[hello]]"}, 9);
   pass("'hello'local", string{"'hello'"}, 7);
   pass("local[[hello]]", keyword::LOCAL, 5);
@@ -32,7 +32,7 @@ test("extract_token") {
 }
 
 test("tokenize") {
-  using namespace lua::lexer;
+  using namespace lua::token;
   auto pass = [](std::string_view str,
                  std::vector<token_info> expected_tokens) {
     sub(str.data()) {
@@ -43,7 +43,7 @@ test("tokenize") {
     }
   };
 
-  using namespace lua::lexer::tokens;
+  using namespace lua::token;
   pass("local --t =\n\r--[[hello]] t = [[hello]]\r\n  @",
        {
            token_info{keyword::LOCAL, {0, 0}},

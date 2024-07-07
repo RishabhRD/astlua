@@ -34,7 +34,7 @@ test("parse_symbol test") {
   fail("");
 
   auto symbols =
-      std::views::transform(lua::lexer::ordered_symbol_string_rep,
+      std::views::transform(lua::token::ordered_symbol_string_rep,
                             [](auto const& rep) { return rep.second; });
   std::ranges::for_each(symbols, [](auto s) { pass(s); });
 }

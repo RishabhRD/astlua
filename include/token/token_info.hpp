@@ -1,11 +1,11 @@
 #pragma once
 
 #include <ostream>
-#include "lexer/token.hpp"
 #include "position.hpp"
+#include "token/token.hpp"
 
 namespace lua {
-namespace lexer {
+namespace token {
 struct token_info {
   token_t token;
   position_t position;
@@ -17,5 +17,5 @@ struct token_info {
     return os;
   }
 };
-}  // namespace lexer
+}  // namespace token
 }  // namespace lua

@@ -1,12 +1,10 @@
 #pragma once
 
 #include <array>
-#include "lexer/token.hpp"
+#include "token/token.hpp"
 
 namespace lua {
-namespace lexer {
-namespace __representation_details {
-using namespace lua::lexer::tokens;
+namespace token {
 
 // Invariant:
 //   keywords are ordered such that higher priority keywords come first
@@ -66,10 +64,6 @@ constexpr std::array<std::pair<symbol, std::string_view>, 26>
         {symbol::CONCAT, ".."},
         {symbol::MEMBER, "."},
     };
-}  // namespace __representation_details
-
-using __representation_details::ordered_keyword_string_rep;
-using __representation_details::ordered_symbol_string_rep;
 
 // Precondition:
 //   - [begin, end) is a valid keyword string
@@ -77,7 +71,7 @@ using __representation_details::ordered_symbol_string_rep;
 // Postcondition:
 //   - Returns the keyword represented by [begin, end) in ordered_keyword_string_rep
 template <std::forward_iterator Iter>
-constexpr auto to_keyword(Iter begin, Iter end) -> lua::lexer::tokens::keyword {
+constexpr auto to_keyword(Iter begin, Iter end) -> keyword {
   return std::ranges::find_if(ordered_keyword_string_rep,
                               [begin, end](auto const& rep) {
                                 return std::equal(begin, end,
@@ -94,7 +88,7 @@ constexpr auto to_keyword(Iter begin, Iter end) -> lua::lexer::tokens::keyword {
 // Postcondition:
 //   - Returns the symbol represented by [begin, end) in ordered_symbol_string_rep
 template <std::forward_iterator Iter>
-constexpr auto to_symbol(Iter begin, Iter end) -> lua::lexer::tokens::symbol {
+constexpr auto to_symbol(Iter begin, Iter end) -> symbol {
   return std::ranges::find_if(ordered_symbol_string_rep,
                               [begin, end](auto const& rep) {
                                 return std::equal(begin, end,
@@ -105,5 +99,5 @@ constexpr auto to_symbol(Iter begin, Iter end) -> lua::lexer::tokens::symbol {
   ;
 }
 
-}  // namespace lexer
+}  // namespace token
 }  // namespace lua

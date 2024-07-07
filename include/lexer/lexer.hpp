@@ -9,7 +9,7 @@
 #include "lexer/parse_symbol.hpp"
 #include "lexer/skip_non_tokens.hpp"
 #include "position.hpp"
-#include "token_info.hpp"
+#include "token/token_info.hpp"
 
 namespace lua {
 namespace lexer {
@@ -49,8 +49,8 @@ constexpr auto reduce_position(Iter begin, Iter end, position_t cur_position) {
 //       - illegal
 template <std::forward_iterator Iter>
 constexpr auto extract_token(Iter begin,
-                             Iter end) -> std::pair<lua::lexer::token_t, Iter> {
-  using namespace lua::lexer::tokens;
+                             Iter end) -> std::pair<lua::token::token_t, Iter> {
+  using namespace lua::token;
 
   auto res = parse_keyword(begin, end);
   if (res)
@@ -90,7 +90,8 @@ constexpr auto extract_token(Iter begin,
 //     and put the `token_info` into `out`
 //   - `token_info` represents the token with its position in `[begin, end)` in
 //     term of 2D string separated by new line character
-template <std::forward_iterator Iter, std::output_iterator<token_info> Out>
+template <std::forward_iterator Iter,
+          std::output_iterator<token::token_info> Out>
 constexpr auto tokenize(Iter begin, Iter end, Out out) -> void {
   position_t cur_position{
       .line = 0,
@@ -103,7 +104,7 @@ constexpr auto tokenize(Iter begin, Iter end, Out out) -> void {
     begin = cur;
 
     auto [token, new_begin] = extract_token(begin, end);
-    *out = token_info{std::move(token), cur_position};
+    *out = token::token_info{std::move(token), cur_position};
     ++out;
 
     cur_position = reduce_position(begin, new_begin, cur_position);

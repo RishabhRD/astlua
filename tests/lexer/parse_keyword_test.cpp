@@ -42,7 +42,7 @@ test("parse_keyword test") {
   fail("<");
 
   auto keywords =
-      std::views::transform(lua::lexer::ordered_keyword_string_rep,
+      std::views::transform(lua::token::ordered_keyword_string_rep,
                             [](auto const& rep) { return rep.second; });
   std::ranges::for_each(keywords, [](auto s) { pass(s); });
 }

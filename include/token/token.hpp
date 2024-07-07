@@ -4,11 +4,9 @@
 #include <ostream>
 #include <string>
 #include <variant>
-#include "functional.hpp"
 
 namespace lua {
-namespace lexer {
-namespace tokens {
+namespace token {
 enum class keyword {
   AND,
   BREAK,
@@ -109,12 +107,9 @@ struct illegal {
   }
 };
 
-}  // namespace tokens
-
 using token_t =
-    std::variant<tokens::keyword, tokens::symbol, tokens::string,
-                 tokens::identifier, tokens::number, tokens::illegal>;
+    std::variant<keyword, symbol, string, identifier, number, illegal>;
 
 std::ostream& operator<<(std::ostream& os, token_t const& token_var);
-}  // namespace lexer
+}  // namespace token
 }  // namespace lua
