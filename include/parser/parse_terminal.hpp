@@ -1,9 +1,7 @@
 #pragma once
 
-#include <iterator>
 #include "ast/ast.hpp"
 #include "parser/combinator.hpp"
-#include "parser/parsed.hpp"
 #include "token/token.hpp"
 
 namespace lua::parser {
@@ -11,68 +9,27 @@ inline auto parse_false = match(token::keyword::FALSE, ast::false_t{});
 inline auto parse_true = match(token::keyword::TRUE, ast::true_t{});
 inline auto parse_nil = match(token::keyword::NIL, ast::nil{});
 inline auto parse_vararg = match(token::symbol::VARARG, ast::vararg{});
-
-template <std::input_iterator Iter>
-auto parse_binary_op(Iter begin, Iter end) -> parsed<ast::binary_op, Iter> {
-  if (begin == end)
-    return std::nullopt;
-
-  if (*begin == token::token_t{token::symbol::PLUS})
-    return std::pair{ast::binary_op::PLUS, ++begin};
-  if (*begin == token::token_t{token::symbol::MINUS})
-    return std::pair{ast::binary_op::MINUS, ++begin};
-  if (*begin == token::token_t{token::symbol::PROD})
-    return std::pair{ast::binary_op::PROD, ++begin};
-  if (*begin == token::token_t{token::symbol::DIV})
-    return std::pair{ast::binary_op::DIV, ++begin};
-  if (*begin == token::token_t{token::symbol::EXP})
-    return std::pair{ast::binary_op::EXP, ++begin};
-  if (*begin == token::token_t{token::symbol::MOD})
-    return std::pair{ast::binary_op::MOD, ++begin};
-  if (*begin == token::token_t{token::symbol::CONCAT})
-    return std::pair{ast::binary_op::CONCAT, ++begin};
-  if (*begin == token::token_t{token::symbol::LT})
-    return std::pair{ast::binary_op::LT, ++begin};
-  if (*begin == token::token_t{token::symbol::LTE})
-    return std::pair{ast::binary_op::LTE, ++begin};
-  if (*begin == token::token_t{token::symbol::GT})
-    return std::pair{ast::binary_op::GT, ++begin};
-  if (*begin == token::token_t{token::symbol::GTE})
-    return std::pair{ast::binary_op::GTE, ++begin};
-  if (*begin == token::token_t{token::symbol::EQ})
-    return std::pair{ast::binary_op::EQ, ++begin};
-  if (*begin == token::token_t{token::symbol::NE})
-    return std::pair{ast::binary_op::NE, ++begin};
-  if (*begin == token::token_t{token::keyword::AND})
-    return std::pair{ast::binary_op::AND, ++begin};
-  if (*begin == token::token_t{token::keyword::OR})
-    return std::pair{ast::binary_op::OR, ++begin};
-  return std::nullopt;
-}
-
-template <std::input_iterator Iter>
-auto parse_unary_op(Iter begin, Iter end) -> parsed<ast::unary_op, Iter> {
-  if (begin == end)
-    return std::nullopt;
-
-  if (*begin == token::token_t{token::symbol::MINUS})
-    return std::pair{ast::unary_op::MINUS, ++begin};
-  if (*begin == token::token_t{token::keyword::NOT})
-    return std::pair{ast::unary_op::NOT, ++begin};
-  if (*begin == token::token_t{token::symbol::LEN})
-    return std::pair{ast::unary_op::LEN, ++begin};
-  return std::nullopt;
-}
-
-template <std::input_iterator Iter>
-auto parse_field_sep(Iter begin, Iter end) -> parsed<ast::field_sep, Iter> {
-  if (begin == end)
-    return std::nullopt;
-
-  if (*begin == token::token_t{token::symbol::COMMA})
-    return std::pair{ast::field_sep::COMMA, ++begin};
-  if (*begin == token::token_t{token::symbol::SEMICOLON})
-    return std::pair{ast::field_sep::SEMICOLON, ++begin};
-  return std::nullopt;
-}
+inline auto parse_binary_op =
+    choice<ast::binary_op>(match(token::symbol::PLUS, ast::binary_op::PLUS),
+                           match(token::symbol::MINUS, ast::binary_op::MINUS),
+                           match(token::symbol::PROD, ast::binary_op::PROD),
+                           match(token::symbol::DIV, ast::binary_op::DIV),
+                           match(token::symbol::EXP, ast::binary_op::EXP),
+                           match(token::symbol::MOD, ast::binary_op::MOD),
+                           match(token::symbol::CONCAT, ast::binary_op::CONCAT),
+                           match(token::symbol::LT, ast::binary_op::LT),
+                           match(token::symbol::LTE, ast::binary_op::LTE),
+                           match(token::symbol::GT, ast::binary_op::GT),
+                           match(token::symbol::GTE, ast::binary_op::GTE),
+                           match(token::symbol::EQ, ast::binary_op::EQ),
+                           match(token::symbol::NE, ast::binary_op::NE),
+                           match(token::keyword::AND, ast::binary_op::AND),
+                           match(token::keyword::OR, ast::binary_op::OR));
+inline auto parse_unary_op =
+    choice<ast::unary_op>(match(token::symbol::MINUS, ast::unary_op::MINUS),
+                          match(token::keyword::NOT, ast::unary_op::NOT),
+                          match(token::symbol::LEN, ast::unary_op::LEN));
+inline auto parse_field_sep = choice<ast::field_sep>(
+    match(token::symbol::COMMA, ast::field_sep::COMMA),
+    match(token::symbol::SEMICOLON, ast::field_sep::SEMICOLON));
 }  // namespace lua::parser
