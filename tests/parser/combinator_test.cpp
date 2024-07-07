@@ -59,3 +59,14 @@ test("maybe") {
   pass("no element", {}, parser, std::nullopt, 0);
   pass("with wrong element", {token::keyword::TRUE}, parser, std::nullopt, 0);
 }
+
+test("zero_or_more") {
+  auto parser = zero_or_more(parse_false);
+  pass("0 false", {token::keyword::TRUE}, parser, std::vector<ast::false_t>{},
+       0);
+  pass("1 false", {token::keyword::FALSE, token::keyword::TRUE}, parser,
+       std::vector{ast::false_t{}}, 1);
+  pass("2 false",
+       {token::keyword::FALSE, token::keyword::FALSE, token::keyword::TRUE},
+       parser, std::vector{ast::false_t{}, ast::false_t{}}, 2);
+}
