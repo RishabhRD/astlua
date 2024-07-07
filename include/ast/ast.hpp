@@ -39,7 +39,7 @@ struct block {
 enum class unary_op {
   MINUS,
   NOT,
-  HASH,
+  LEN,
 };
 
 enum class binary_op {

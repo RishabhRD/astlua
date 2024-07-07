@@ -47,7 +47,7 @@ std::ostream& operator<<(std::ostream& os, unary_op const& op) {
     case unary_op::NOT:
       os << "not";
       break;
-    case unary_op::HASH:
+    case unary_op::LEN:
       os << "#";
       break;
   }
