@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iterator>
+#include <optional>
 #include "parser/parsed.hpp"
 #include "token/token.hpp"
 
@@ -34,6 +35,17 @@ inline auto choice(FirstParser first, RestParsers... rest) {
     if (res)
       return std::pair{static_cast<NodeType>(res->first), res->second};
     return choice<NodeType>(rest_...)(begin, end);
+  };
+}
+
+template <typename Parser>
+inline auto maybe(Parser parser) {
+  return [parser_ = std::move(parser)]<typename Iter>(Iter begin, Iter end)
+             -> parsed<std::optional<parse_result_t<Parser, Iter>>, Iter> {
+    auto res = parser_(begin, end);
+    if (res)
+      return std::pair{std::optional{res->first}, res->second};
+    return std::pair{std::nullopt, begin};
   };
 }
 }  // namespace lua::parser

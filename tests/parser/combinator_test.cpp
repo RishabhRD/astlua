@@ -52,3 +52,10 @@ test("choice") {
   pass("only vararg", {token::symbol::VARARG}, parser, ast::expr{ast::vararg{}},
        1);
 }
+
+test("maybe") {
+  auto parser = maybe(parse_false);
+  pass("only false", {token::keyword::FALSE}, parser, ast::false_t{}, 1);
+  pass("no element", {}, parser, std::nullopt, 0);
+  pass("with wrong element", {token::keyword::TRUE}, parser, std::nullopt, 0);
+}
