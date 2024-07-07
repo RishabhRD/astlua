@@ -1,5 +1,4 @@
 #include "ast/ast.hpp"
-#include <iterator>
 #include <optional>
 #include <variant>
 #include "functional.hpp"
@@ -26,7 +25,8 @@ std::ostream& print(std::ostream& os, std::optional<T> const& x) {
 template <typename T>
 std::ostream& print(std::ostream& os, std::vector<T> const& vec) {
   os << "[ ";
-  std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(os, " "));
+  for (auto const& x : vec)
+    os << x << ' ';
   os << "]";
   return os;
 }
