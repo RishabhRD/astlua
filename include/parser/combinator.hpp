@@ -17,4 +17,23 @@ inline auto match(token::token_t token, Ret ast_node) {
     return std::nullopt;
   };
 }
+
+template <typename NodeType>
+inline auto choice() {
+  return []<typename Iter>(Iter, Iter) -> parsed<NodeType, Iter> {
+    return std::nullopt;
+  };
+}
+
+template <typename NodeType, typename FirstParser, typename... RestParsers>
+inline auto choice(FirstParser first, RestParsers... rest) {
+  return
+      [first_ = std::move(first), ... rest_ = std::move(rest)]<typename Iter>(
+          Iter begin, Iter end) -> parsed<NodeType, Iter> {
+        auto res = first_(begin, end);
+        if (res)
+          return std::pair{static_cast<NodeType>(res->first), res->second};
+        return choice<NodeType>(rest_...)(begin, end);
+      };
+}
 }  // namespace lua::parser
