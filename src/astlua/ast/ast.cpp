@@ -31,9 +31,18 @@ std::ostream& print(std::ostream& os, std::vector<T> const& vec) {
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, return_stat const& b) {
+  os << "return_stat{";
+  print(os, b.expr);
+  os << "}";
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, block const& b) {
-  os << "block{";
+  os << "block{statements: ";
   print(os, b.stats);
+  os << ", return_statement: ";
+  print(os, b.return_statement);
   os << "}";
   return os;
 }

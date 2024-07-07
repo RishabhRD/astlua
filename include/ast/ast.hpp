@@ -29,9 +29,18 @@ struct expr;
 using prefix_handle = std::unique_ptr<prefix_expr>;
 using expr_handle = std::unique_ptr<expr>;
 
+struct return_stat {
+  expr_handle expr;
+
+  friend bool operator==(return_stat const& a, return_stat const& b) {
+    return __ast_details::is_equal(a.expr, b.expr);
+  }
+};
+
 // Basic data structures
 struct block {
   std::vector<statement> stats;
+  std::optional<return_stat> return_statement;
 
   friend bool operator==(block const&, block const&) = default;
 };
@@ -327,6 +336,7 @@ struct statement {
 // Root of AST
 using ast = block;
 
+std::ostream& operator<<(std::ostream&, return_stat const&);
 std::ostream& operator<<(std::ostream&, block const&);
 std::ostream& operator<<(std::ostream&, unary_op const&);
 std::ostream& operator<<(std::ostream&, binary_op const&);
