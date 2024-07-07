@@ -2,49 +2,15 @@
 
 #include <iterator>
 #include "ast/ast.hpp"
+#include "parser/combinator.hpp"
 #include "parser/parsed.hpp"
 #include "token/token.hpp"
 
 namespace lua::parser {
-template <std::input_iterator Iter>
-auto parse_false(Iter begin, Iter end) -> parsed<ast::false_t, Iter> {
-  if (begin == end)
-    return std::nullopt;
-
-  if (*begin == token::token_t{token::keyword::FALSE})
-    return std::pair{ast::false_t{}, ++begin};
-  return std::nullopt;
-}
-
-template <std::input_iterator Iter>
-auto parse_true(Iter begin, Iter end) -> parsed<ast::true_t, Iter> {
-  if (begin == end)
-    return std::nullopt;
-
-  if (*begin == token::token_t{token::keyword::TRUE})
-    return std::pair{ast::true_t{}, ++begin};
-  return std::nullopt;
-}
-
-template <std::input_iterator Iter>
-auto parse_nil(Iter begin, Iter end) -> parsed<ast::nil, Iter> {
-  if (begin == end)
-    return std::nullopt;
-
-  if (*begin == token::token_t{token::keyword::NIL})
-    return std::pair{ast::nil{}, ++begin};
-  return std::nullopt;
-}
-
-template <std::input_iterator Iter>
-auto parse_vararg(Iter begin, Iter end) -> parsed<ast::vararg, Iter> {
-  if (begin == end)
-    return std::nullopt;
-
-  if (*begin == token::token_t{token::symbol::VARARG})
-    return std::pair{ast::vararg{}, ++begin};
-  return std::nullopt;
-}
+inline auto parse_false = match(token::keyword::FALSE, ast::false_t{});
+inline auto parse_true = match(token::keyword::TRUE, ast::true_t{});
+inline auto parse_nil = match(token::keyword::NIL, ast::nil{});
+inline auto parse_vararg = match(token::symbol::VARARG, ast::vararg{});
 
 template <std::input_iterator Iter>
 auto parse_binary_op(Iter begin, Iter end) -> parsed<ast::binary_op, Iter> {
