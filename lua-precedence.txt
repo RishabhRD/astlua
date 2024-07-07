@@ -1,0 +1,9 @@
+exp is broken down into several rules to reflect different precedence levels.
+Logical OR (or) has the lowest precedence.
+Logical AND (and) has higher precedence than or.
+Comparison operators (<, <=, >, >=, ==, ~=) have higher precedence than logical operators.
+Concatenation (..) has higher precedence than comparison operators.
+Addition and subtraction (+, -) have higher precedence than concatenation.
+Multiplication, division, and modulo (*, /, %) have higher precedence than addition and subtraction.
+Unary operators (-, not, #) have higher precedence than multiplication, division, and modulo.
+Exponentiation (^) has the highest precedence.
