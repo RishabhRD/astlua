@@ -8,7 +8,7 @@
 #include <vector>
 #include "functional.hpp"
 
-namespace lua::parser::ast {
+namespace lua::ast {
 namespace __ast_details {
 template <typename T>
 bool is_equal(std::unique_ptr<T> const& a, std::unique_ptr<T> const& b) {
@@ -367,4 +367,4 @@ std::ostream& operator<<(std::ostream&, for_in_stat const&);
 std::ostream& operator<<(std::ostream&, fn_decl_stat const&);
 std::ostream& operator<<(std::ostream&, local_fn_decl_stat const&);
 std::ostream& operator<<(std::ostream&, var_decl_stat const&);
-}  // namespace lua::parser::ast
+}  // namespace lua::ast

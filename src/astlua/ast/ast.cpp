@@ -1,10 +1,10 @@
-#include "parser/ast.hpp"
+#include "ast/ast.hpp"
 #include <iterator>
 #include <optional>
 #include <variant>
 #include "functional.hpp"
 
-namespace lua::parser::ast {
+namespace lua::ast {
 template <typename T>
 std::ostream& print(std::ostream& os, std::unique_ptr<T> const& x) {
   if (x == nullptr)
@@ -353,4 +353,4 @@ std::ostream& operator<<(std::ostream& os, statement const& x) {
   std::visit([&os](auto const& a) { os << a; }, x.choices);
   return os;
 }
-}  // namespace lua::parser::ast
+}  // namespace lua::ast
