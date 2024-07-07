@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <optional>
+#include <ostream>
 #include <string>
 #include <variant>
 #include <vector>
@@ -13,7 +14,7 @@ bool is_equal(std::unique_ptr<T> const& a, std::unique_ptr<T> const& b) {
   if (a == nullptr && b == nullptr)
     return true;
   if (a != nullptr && b != nullptr)
-    return *(a.get()) == *(b.get());
+    return *a == *b;
   return false;
 }
 }  // namespace __ast_details
@@ -134,7 +135,11 @@ struct string {
   friend bool operator==(string const&, string const&) = default;
 };
 
-using args = std::variant<std::vector<expr>, table, string>;
+struct args {
+  std::variant<std::vector<expr>, table, string> arguments;
+
+  friend bool operator==(args const&, args const&) = default;
+};
 
 struct fn_call {
   prefix_handle prefix;
@@ -305,4 +310,45 @@ struct statement
 
 // Root of AST
 using ast = block;
+
+std::ostream& operator<<(std::ostream&, block const&);
+std::ostream& operator<<(std::ostream&, unary_op const&);
+std::ostream& operator<<(std::ostream&, binary_op const&);
+template <typename T>
+std::ostream& operator<<(std::ostream&, list_1<T> const&);
+std::ostream& operator<<(std::ostream&, expression_var const&);
+std::ostream& operator<<(std::ostream&, name_var const&);
+std::ostream& operator<<(std::ostream&, var const&);
+std::ostream& operator<<(std::ostream&, field_sep const&);
+std::ostream& operator<<(std::ostream&, expr_field const&);
+std::ostream& operator<<(std::ostream&, name_field const&);
+std::ostream& operator<<(std::ostream&, value_field const&);
+std::ostream& operator<<(std::ostream&, field const&);
+std::ostream& operator<<(std::ostream&, table const&);
+std::ostream& operator<<(std::ostream&, string const&);
+std::ostream& operator<<(std::ostream&, args const&);
+std::ostream& operator<<(std::ostream&, fn_call const&);
+std::ostream& operator<<(std::ostream&, nil const&);
+std::ostream& operator<<(std::ostream&, false_t const&);
+std::ostream& operator<<(std::ostream&, true_t const&);
+std::ostream& operator<<(std::ostream&, number const&);
+std::ostream& operator<<(std::ostream&, vararg const&);
+std::ostream& operator<<(std::ostream&, fn_body const&);
+std::ostream& operator<<(std::ostream&, fn const&);
+std::ostream& operator<<(std::ostream&, binary_expr const&);
+std::ostream& operator<<(std::ostream&, unary_expr const&);
+std::ostream& operator<<(std::ostream&, prefix_expr const&);
+std::ostream& operator<<(std::ostream&, expr const&);
+std::ostream& operator<<(std::ostream&, var_assign_stat const&);
+std::ostream& operator<<(std::ostream&, do_stat const&);
+std::ostream& operator<<(std::ostream&, while_stat const&);
+std::ostream& operator<<(std::ostream&, repeat_stat const&);
+std::ostream& operator<<(std::ostream&, elseif_code const&);
+std::ostream& operator<<(std::ostream&, else_code const&);
+std::ostream& operator<<(std::ostream&, if_stat const&);
+std::ostream& operator<<(std::ostream&, for_range_stat const&);
+std::ostream& operator<<(std::ostream&, for_in_stat const&);
+std::ostream& operator<<(std::ostream&, fn_decl_stat const&);
+std::ostream& operator<<(std::ostream&, local_fn_decl_stat const&);
+std::ostream& operator<<(std::ostream&, var_decl_stat const&);
 }  // namespace lua::parser::ast
