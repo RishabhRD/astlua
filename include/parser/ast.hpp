@@ -6,9 +6,8 @@
 #include <variant>
 #include <vector>
 
-namespace lua {
-namespace ast {
-
+namespace lua::parser::ast {
+namespace __ast_details {
 template <typename T>
 bool is_equal(std::unique_ptr<T> const& a, std::unique_ptr<T> const& b) {
   if (a == nullptr && b == nullptr)
@@ -17,6 +16,7 @@ bool is_equal(std::unique_ptr<T> const& a, std::unique_ptr<T> const& b) {
     return *(a.get()) == *(b.get());
   return false;
 }
+}  // namespace __ast_details
 
 // Forward declarations
 struct statement;
@@ -71,7 +71,8 @@ struct expression_var {
   expr_handle property;
 
   friend bool operator==(expression_var const& a, expression_var const& b) {
-    return is_equal(a.field, b.field) && is_equal(a.property, b.property);
+    return __ast_details::is_equal(a.field, b.field) &&
+           __ast_details::is_equal(a.property, b.property);
   }
 };
 
@@ -80,7 +81,8 @@ struct name_var {
   std::string property;
 
   friend bool operator==(name_var const& a, name_var const& b) {
-    return is_equal(a.field, b.field) && a.property == b.property;
+    return __ast_details::is_equal(a.field, b.field) &&
+           a.property == b.property;
   }
 };
 
@@ -96,7 +98,8 @@ struct expr_field {
   expr_handle value;
 
   friend bool operator==(expr_field const& a, expr_field const& b) {
-    return is_equal(a.key, b.key) && is_equal(a.value, b.value);
+    return __ast_details::is_equal(a.key, b.key) &&
+           __ast_details::is_equal(a.value, b.value);
   }
 };
 
@@ -105,7 +108,7 @@ struct name_field {
   expr_handle value;
 
   friend bool operator==(name_field const& a, name_field const& b) {
-    return a.key == b.key && is_equal(a.value, b.value);
+    return a.key == b.key && __ast_details::is_equal(a.value, b.value);
   }
 };
 
@@ -113,7 +116,7 @@ struct value_field {
   expr_handle value;
 
   friend bool operator==(value_field const& a, value_field const& b) {
-    return is_equal(a.value, b.value);
+    return __ast_details::is_equal(a.value, b.value);
   }
 };
 
@@ -138,7 +141,8 @@ struct fn_call {
   std::optional<std::string> field_name;
 
   friend bool operator==(fn_call const& a, fn_call const& b) {
-    return is_equal(a.prefix, b.prefix) && a.field_name == b.field_name;
+    return __ast_details::is_equal(a.prefix, b.prefix) &&
+           a.field_name == b.field_name;
   }
 };
 
@@ -182,8 +186,8 @@ struct binary_expr {
   expr_handle right_expr;
 
   friend bool operator==(binary_expr const& a, binary_expr const& b) {
-    return a.op == b.op && is_equal(a.left_expr, b.left_expr) &&
-           is_equal(a.right_expr, b.right_expr);
+    return a.op == b.op && __ast_details::is_equal(a.left_expr, b.left_expr) &&
+           __ast_details::is_equal(a.right_expr, b.right_expr);
   }
 };
 
@@ -192,7 +196,7 @@ struct unary_expr {
   expr_handle expr;
 
   friend bool operator==(unary_expr const& a, unary_expr const& b) {
-    return a.op == b.op && is_equal(a.expr, b.expr);
+    return a.op == b.op && __ast_details::is_equal(a.expr, b.expr);
   }
 };
 
@@ -301,6 +305,4 @@ struct statement
 
 // Root of AST
 using ast = block;
-
-}  // namespace ast
-}  // namespace lua
+}  // namespace lua::parser::ast

@@ -1,7 +1,8 @@
 #include "parser/ast.hpp"
 
 int main() {
-  lua::ast::ast a{};
-  lua::ast::ast b{};
+  using namespace lua::parser;
+  ast::ast a{};
+  ast::ast b{};
   if (a == b) {}
 }
