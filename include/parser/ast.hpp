@@ -205,14 +205,18 @@ struct unary_expr {
   }
 };
 
-struct prefix_expr : public std::variant<var, fn_call, expr_handle> {
-  using std::variant<var, fn_call, expr_handle>::variant;
+struct prefix_expr {
+  std::variant<var, fn_call, expr_handle> choices;
+
+  friend bool operator==(prefix_expr const&, prefix_expr const&) = default;
 };
 
-struct expr : public std::variant<nil, false_t, true_t, number, fn, prefix_expr,
-                                  table, binary_expr, unary_expr, vararg> {
-  using std::variant<nil, false_t, true_t, number, fn, prefix_expr, table,
-                     binary_expr, unary_expr, vararg>::variant;
+struct expr {
+  std::variant<nil, false_t, true_t, number, fn, prefix_expr, table,
+               binary_expr, unary_expr, vararg>
+      choices;
+
+  friend bool operator==(expr const&, expr const&) = default;
 };
 
 // Statements
@@ -299,13 +303,13 @@ struct var_decl_stat {
   friend bool operator==(var_decl_stat const&, var_decl_stat const&) = default;
 };
 
-struct statement
-    : public std::variant<var_assign_stat, do_stat, while_stat, repeat_stat,
-                          if_stat, for_range_stat, for_in_stat, fn_decl_stat,
-                          local_fn_decl_stat, var_decl_stat> {
-  using std::variant<var_assign_stat, do_stat, while_stat, repeat_stat, if_stat,
-                     for_range_stat, for_in_stat, fn_decl_stat,
-                     local_fn_decl_stat, var_decl_stat>::variant;
+struct statement {
+  std::variant<var_assign_stat, do_stat, while_stat, repeat_stat, if_stat,
+               for_range_stat, for_in_stat, fn_decl_stat, local_fn_decl_stat,
+               var_decl_stat>
+      choices;
+
+  friend bool operator==(statement const&, statement const&) = default;
 };
 
 // Root of AST

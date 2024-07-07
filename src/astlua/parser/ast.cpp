@@ -31,13 +31,6 @@ std::ostream& print(std::ostream& os, std::vector<T> const& vec) {
   return os;
 }
 
-std::ostream& print(std::ostream& os, table const& t) {
-  os << "table{fields: ";
-  print(os, t.fields);
-  os << "}";
-  return os;
-}
-
 std::ostream& operator<<(std::ostream& os, block const& b) {
   os << "block{";
   print(os, b.stats);
@@ -262,21 +255,23 @@ std::ostream& operator<<(std::ostream& os, binary_expr const& x) {
   os << ", right_expr: ";
   print(os, x.right_expr);
   os << "}";
+  return os;
 }
 
 std::ostream& operator<<(std::ostream& os, unary_expr const& x) {
   os << "unary_expr{op: " << x.op << ", expr: ";
   print(os, x.expr);
   os << "}";
+  return os;
 }
 
 std::ostream& operator<<(std::ostream& os, prefix_expr const& x) {
-  std::visit([&os](auto const& a) { os << a; }, x);
+  std::visit([&os](auto const& a) { os << a; }, x.choices);
   return os;
 }
 
 std::ostream& operator<<(std::ostream& os, expr const& x) {
-  std::visit([&os](auto const& a) { os << a; }, x);
+  std::visit([&os](auto const& a) { os << a; }, x.choices);
   return os;
 }
 
@@ -355,7 +350,7 @@ std::ostream& operator<<(std::ostream& os, var_decl_stat const& x) {
 }
 
 std::ostream& operator<<(std::ostream& os, statement const& x) {
-  std::visit([&os](auto const& a) { os << a; }, x);
+  std::visit([&os](auto const& a) { os << a; }, x.choices);
   return os;
 }
 }  // namespace lua::parser::ast

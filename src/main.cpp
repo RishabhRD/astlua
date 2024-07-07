@@ -1,3 +1,4 @@
+#include <iostream>
 #include "parser/ast.hpp"
 
 int main() {
@@ -5,4 +6,5 @@ int main() {
   ast::ast a{};
   ast::ast b{};
   if (a == b) {}
+  std::cout << a << std::endl;
 }
