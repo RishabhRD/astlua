@@ -6,6 +6,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include "functional.hpp"
 
 namespace lua::parser::ast {
 namespace __ast_details {
@@ -208,7 +209,18 @@ struct unary_expr {
 struct prefix_expr {
   std::variant<var, fn_call, expr_handle> choices;
 
-  friend bool operator==(prefix_expr const&, prefix_expr const&) = default;
+  friend bool operator==(prefix_expr const& a, prefix_expr const& b) {
+    return std::visit(
+        nostd::overload{
+            [](auto const&, auto const&) { return false; },
+            [](var const& x, var const& y) { return x == y; },
+            [](fn_call const& x, fn_call const& y) { return x == y; },
+            [](expr_handle const& x, expr_handle const& y) {
+              return __ast_details::is_equal(x, y);
+            },
+        },
+        a.choices, b.choices);
+  };
 };
 
 struct expr {
