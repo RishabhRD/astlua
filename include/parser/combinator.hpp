@@ -101,6 +101,7 @@ inline auto one_or_more(Parser parser) {
   };
 }
 
+namespace __seq_details {
 constexpr auto papply = []<typename F, typename... Args>(F f, Args... args) {
   if constexpr (std::invocable<F, Args...>) {
     return std::move(f)(std::move(args)...);
@@ -109,18 +110,16 @@ constexpr auto papply = []<typename F, typename... Args>(F f, Args... args) {
   }
 };
 
-namespace __seq_details {
 template <typename F, typename P, typename I>
 using result_type =
     parsed<std::invoke_result_t<decltype(papply), parse_result_t<F, I>,
                                 parse_result_t<P, I>>,
            I>;
-}
 
 template <typename P1, typename P2>
 inline auto parser_apply(P1 p1, P2 p2) {
   return [p1_ = std::move(p1), p2_ = std::move(p2)]<typename Iter>(
-             Iter begin, Iter end) -> __seq_details::result_type<P1, P2, Iter> {
+             Iter begin, Iter end) -> result_type<P1, P2, Iter> {
     if (auto p1_r = p1_(begin, end)) {
       if (auto p2_r = p2_(p1_r->second, end)) {
         return std::pair{papply(std::move(p1_r->first), std::move(p2_r->first)),
@@ -136,9 +135,10 @@ template <typename FunctionParser, typename Parser, typename Parsers>
 inline auto parser_apply(FunctionParser pf, Parser p, Parsers ps) {
   return parser_apply(parser_apply(std::move(pf), std::move(p)), std::move(ps));
 }
+}  // namespace __seq_details
 
 template <typename Function, typename... Parser>
 inline auto sequence(Function f, Parser... p) {
-  return parser_apply(always(std::move(f)), std::move(p)...);
+  return __seq_details::parser_apply(always(std::move(f)), std::move(p)...);
 }
 }  // namespace lua::parser
