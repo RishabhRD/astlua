@@ -13,7 +13,7 @@ inline auto match(token::token_t token, Ret ast_node) {
   return [token_ = std::move(token),
           ast_node_ = std::move(ast_node)]<std::forward_iterator Iter>(
              Iter begin, Iter end) -> parsed<Ret, Iter> {
-    if (begin != end && *begin == token_)
+    if (begin != end && begin->token == token_)
       return std::pair{ast_node_, ++begin};
     return std::nullopt;
   };
