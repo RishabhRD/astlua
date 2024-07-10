@@ -73,3 +73,28 @@ test(",name parser") {
   fail("", {}, comma_name_parser);
   fail("do", {token::keyword::DO}, comma_name_parser);
 }
+
+test("name list parser") {
+  pass("name", {token::identifier("hello")}, name_list_parser,
+       ast::list_1{std::string{"hello"}}, 1);
+  pass("name,", {token::identifier("hello"), token::symbol::COMMA},
+       name_list_parser, ast::list_1{std::string{"hello"}}, 1);
+  pass("name,name",
+       {token::identifier("hello"), token::symbol::COMMA,
+        token::identifier("world")},
+       name_list_parser,
+       ast::list_1{std::string{"hello"}, std::vector<std::string>{"world"}}, 3);
+  pass("name,name,",
+       {token::identifier("hello"), token::symbol::COMMA,
+        token::identifier("world"), token::symbol::COMMA},
+       name_list_parser,
+       ast::list_1{std::string{"hello"}, std::vector<std::string>{"world"}}, 3);
+  pass(
+      "name,name,name",
+      {token::identifier("hello"), token::symbol::COMMA,
+       token::identifier("world"), token::symbol::COMMA,
+       token::identifier("!")},
+      name_list_parser,
+      ast::list_1{std::string{"hello"}, std::vector<std::string>{"world", "!"}},
+      5);
+}

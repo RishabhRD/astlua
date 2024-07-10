@@ -22,6 +22,6 @@ inline auto name_list_parser = sequence(
     [](auto name, auto lst) {
       return ast::list_1{std::move(name), std::move(lst)};
     },
-    zero_or_more(comma_name_parser));
+    name_parser, zero_or_more(comma_name_parser));
 
 }  // namespace lua::parser
