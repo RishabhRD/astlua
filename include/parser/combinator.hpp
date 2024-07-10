@@ -132,11 +132,6 @@ inline auto parser_apply(P1 p1, P2 p2) {
   };
 }
 
-template <typename FunctionParser>
-inline auto parser_apply(FunctionParser pf) {
-  return pf;
-}
-
 template <typename FunctionParser, typename Parser, typename Parsers>
 inline auto parser_apply(FunctionParser pf, Parser p, Parsers ps) {
   return parser_apply(parser_apply(std::move(pf), std::move(p)), std::move(ps));
