@@ -52,6 +52,7 @@ auto fail(std::string_view desc, std::vector<lua::token::token_t> const& tokens,
 }
 }  // namespace combinator_test
 
+auto parse_eq = match(token::symbol::EQ, ast::binary_op::EQ);
 auto parse_false = match(token::keyword::FALSE, ast::false_t{});
 auto parse_true = match(token::keyword::TRUE, ast::true_t{});
 auto parse_vararg = match(token::symbol::VARARG, ast::vararg{});
@@ -59,7 +60,6 @@ auto parse_vararg = match(token::symbol::VARARG, ast::vararg{});
 using namespace combinator_test;
 
 test("match") {
-  auto parse_eq = match(token::symbol::EQ, ast::binary_op::EQ);
   pass("only equal", {token::symbol::EQ}, parse_eq, ast::binary_op::EQ, 1);
   pass("equal with other tokens", {token::symbol::EQ, token::keyword::DO},
        parse_eq, ast::binary_op::EQ, 1);
@@ -105,4 +105,11 @@ test("one_or_more") {
   pass("2 false",
        {token::keyword::FALSE, token::keyword::FALSE, token::keyword::TRUE},
        parser, ast::list_1{ast::false_t{}, {ast::false_t{}}}, 2);
+}
+
+test("sequence") {
+  auto eq_false = sequence([](auto, auto) { return ast::false_t(); }, parse_eq,
+                           parse_false);
+  pass("=false", {token::symbol::EQ, token::keyword::FALSE}, eq_false,
+       ast::false_t(), 2);
 }
