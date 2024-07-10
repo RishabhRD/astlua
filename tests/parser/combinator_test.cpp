@@ -112,4 +112,8 @@ test("sequence") {
                            parse_false);
   pass("=false", {token::symbol::EQ, token::keyword::FALSE}, eq_false,
        ast::false_t(), 2);
+  fail("false", {token::keyword::FALSE}, eq_false);
+  fail("=", {token::symbol::EQ}, eq_false);
+  fail("", {}, eq_false);
+  fail("something else", {token::symbol::LT}, eq_false);
 }
