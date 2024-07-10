@@ -56,4 +56,8 @@ using namespace parse_expression_test;
 
 test("name_parser") {
   pass("name", {token::identifier("hello")}, name_parser, "hello", 1);
+  pass("name something", {token::identifier("hello"), token::keyword::DO},
+       name_parser, "hello", 1);
+  fail("", {}, name_parser);
+  fail("do", {token::keyword::DO}, name_parser);
 }
