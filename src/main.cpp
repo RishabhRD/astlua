@@ -1,12 +1,18 @@
-#include <iostream>
 #include "ast/ast.hpp"
+#include "parser/combinator.hpp"
+#include "parser/parse_expresssion.hpp"
+#include "token/token.hpp"
+#include "token/token_info.hpp"
+
+using namespace lua;
+using namespace lua::parser;
 
 int main() {
-  using namespace lua::ast;
-  ast a{};
-  ast b{};
-  if (a == b) {
-    std::cout << "yes equal" << std::endl;
+  std::vector<token::token_info> tokens{
+      {token::symbol::COMMA, {}},
+      {token::identifier{"hello"}, {}},
+  };
+  if (comma_name_parser(std::begin(tokens), std::end(tokens))) {
+    return 0;
   }
-  std::cout << a << std::endl;
 }

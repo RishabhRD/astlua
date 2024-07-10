@@ -61,3 +61,15 @@ test("name_parser") {
   fail("", {}, name_parser);
   fail("do", {token::keyword::DO}, name_parser);
 }
+
+test(",name parser") {
+  pass(",name", {token::symbol::COMMA, token::identifier("hello")},
+       comma_name_parser, "hello", 2);
+  pass(",name something",
+       {token::symbol::COMMA, token::identifier("hello"), token::keyword::DO},
+       comma_name_parser, "hello", 2);
+  fail(",", {token::symbol::COMMA}, comma_name_parser);
+  fail("name", {token::identifier("hello")}, comma_name_parser);
+  fail("", {}, comma_name_parser);
+  fail("do", {token::keyword::DO}, comma_name_parser);
+}
