@@ -23,10 +23,24 @@ inline auto pure(Ret ret_node) {
   return always(std::move(ret_node));
 }
 
+template <typename If, typename Then>
+inline auto match_if_then(If pred, Then then) {
+  return
+      [pred_ = std::move(pred),
+       then_ = std::move(then)]<std::input_iterator Iter>(
+          Iter begin, Iter end) -> parsed<decltype(then(begin->token)), Iter> {
+        if (begin != end && pred_(begin->token)) {
+          auto val = begin->token;
+          return std::pair{then_(std::move(val)), ++begin};
+        }
+        return std::nullopt;
+      };
+}
+
 template <typename Ret>
 inline auto match(token::token_t token, Ret ast_node) {
   return [token_ = std::move(token),
-          ast_node_ = std::move(ast_node)]<std::forward_iterator Iter>(
+          ast_node_ = std::move(ast_node)]<std::input_iterator Iter>(
              Iter begin, Iter end) -> parsed<Ret, Iter> {
     if (begin != end && begin->token == token_)
       return std::pair{ast_node_, ++begin};
