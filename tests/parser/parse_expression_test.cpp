@@ -190,3 +190,21 @@ test("value_field parser") {
   fail("illegal", {token::illegal{}}, value_field_parser);
   fail("", {}, value_field_parser);
 }
+
+test("field parser") {
+  pass("['x'] = 2",
+       {token::symbol::LBRACKET, token::string("'x'"), token::symbol::RBRACKET,
+        token::symbol::ASSIGN, token::number("2")},
+       field_parser,
+       ast::field(ast::expr_field(ast::expr(ast::string("'x'")),
+                                  ast::expr(ast::number("2")))),
+       5);
+  pass("x = 2",
+       {token::identifier("x"), token::symbol::ASSIGN, token::number("2")},
+       field_parser,
+       ast::field(ast::name_field("x", ast::expr(ast::number("2")))), 3);
+  pass("2", {token::number("2")}, field_parser,
+       ast::field(ast::value_field(ast::expr(ast::number("2")))), 1);
+  fail("illegal", {token::illegal{}}, value_field_parser);
+  fail("", {}, value_field_parser);
+}

@@ -85,4 +85,7 @@ inline auto name_field_parser = sequence(
 
 inline auto value_field_parser = transform(
     expr_parser, [](auto expr) { return ast::value_field{std::move(expr)}; });
+
+inline auto field_parser = choice<ast::field>(
+    expr_field_parser, name_field_parser, value_field_parser);
 }  // namespace lua::parser
