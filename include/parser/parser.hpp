@@ -1,7 +1,9 @@
 #pragma once
 
+#include <iterator>
 #include <variant>
 #include "ast/ast.hpp"
+#include "functional.hpp"
 #include "parser/combinator.hpp"
 #include "token/token.hpp"
 
@@ -11,6 +13,11 @@ namespace lua::parser {
 inline auto get_snd2 = [](auto const&, auto val) {
   return val;
 };
+
+template <std::forward_iterator Iter>
+inline auto expr_parser_fn(Iter begin, Iter end) -> parsed<ast::expr, Iter>;
+
+inline auto expr_parser = lift(expr_parser_fn);
 
 inline auto name_parser = match_if_then(
     [](auto const& name_token) {
@@ -53,9 +60,6 @@ inline auto true_parser = match(token::keyword::TRUE, ast::true_t());
 inline auto false_parser = match(token::keyword::FALSE, ast::false_t());
 inline auto vararg_parser = match(token::symbol::VARARG, ast::vararg());
 
-inline auto expr_parser =
-    choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,
-                      false_parser, vararg_parser);
 inline auto expr_list_parser = list_parser(expr_parser);
 
 inline auto fn_name_parser = sequence(
@@ -104,4 +108,15 @@ inline auto table_parser = sequence(
     },
     skip(token::symbol::LBRACE), maybe(field_list_parser),
     skip(token::symbol::RBRACE));
+
+namespace __parser_details {
+inline auto expr_parser_impl =
+    choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,
+                      false_parser, vararg_parser, table_parser);
+}
+
+template <std::forward_iterator Iter>
+inline auto expr_parser_fn(Iter begin, Iter end) -> parsed<ast::expr, Iter> {
+  return __parser_details::expr_parser_impl(begin, end);
+}
 }  // namespace lua::parser
