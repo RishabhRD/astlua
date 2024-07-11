@@ -91,9 +91,17 @@ inline auto field_parser = choice<ast::field>(
 
 inline auto field_list_parser = sequence(
     [](auto field, auto more_fields, auto) {
-      return ast::list_1{std::move(field), std::move(more_fields)};
+      more_fields.insert(std::begin(more_fields), std::move(field));
+      return more_fields;
     },
     field_parser,
     zero_or_more(sequence(get_snd2, field_sep_parser, field_parser)),
     maybe(field_sep_parser));
+
+inline auto table_parser = sequence(
+    [](auto, auto fields, auto) {
+      return fields ? ast::table{std::move(*fields)} : ast::table{};
+    },
+    skip(token::symbol::LBRACE), maybe(field_list_parser),
+    skip(token::symbol::RBRACE));
 }  // namespace lua::parser
