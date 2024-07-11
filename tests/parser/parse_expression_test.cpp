@@ -208,3 +208,28 @@ test("field parser") {
   fail("illegal", {token::illegal{}}, value_field_parser);
   fail("", {}, value_field_parser);
 }
+
+test("field_list_parser") {
+  pass("2", {token::number("2")}, field_list_parser,
+       ast::list_1{ast::field(ast::value_field(ast::expr(ast::number("2"))))},
+       1);
+  pass("2;", {token::number("2"), token::symbol::SEMICOLON}, field_list_parser,
+       ast::list_1{ast::field(ast::value_field(ast::expr(ast::number("2"))))},
+       2);
+  pass("2,", {token::number("2"), token::symbol::COMMA}, field_list_parser,
+       ast::list_1{ast::field(ast::value_field(ast::expr(ast::number("2"))))},
+       2);
+  pass(
+      "2;3,4;",
+      {token::number("2"), token::symbol::COMMA, token::number("3"),
+       token::symbol::COMMA, token::number("4"), token::symbol::SEMICOLON},
+      field_list_parser,
+      ast::list_1{ast::field(ast::value_field(ast::expr(ast::number("2")))),
+                  {
+                      ast::field(ast::value_field(ast::expr(ast::number("3")))),
+                      ast::field(ast::value_field(ast::expr(ast::number("4")))),
+                  }},
+      6);
+  fail("illegal", {token::illegal{}}, field_list_parser);
+  fail("", {}, field_list_parser);
+}
