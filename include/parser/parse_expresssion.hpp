@@ -53,10 +53,10 @@ inline auto true_parser = match(token::keyword::TRUE, ast::true_t());
 inline auto false_parser = match(token::keyword::FALSE, ast::false_t());
 inline auto vararg_parser = match(token::symbol::VARARG, ast::vararg());
 
-inline auto exp_parser =
+inline auto expr_parser =
     choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,
                       false_parser, vararg_parser);
-inline auto exp_list_parser = list_parser(exp_parser);
+inline auto expr_list_parser = list_parser(expr_parser);
 
 inline auto fn_name_parser = sequence(
     [](auto name, auto dot_names, auto colon_name) {
@@ -69,4 +69,11 @@ inline auto fn_name_parser = sequence(
 
 inline auto field_sep_parser = choice<std::monostate>(
     skip(token::symbol::COMMA), skip(token::symbol::SEMICOLON));
+
+inline auto expr_field_parser = sequence(
+    [](auto, auto key, auto, auto, auto value) {
+      return ast::expr_field{std::move(key), std::move(value)};
+    },
+    skip(token::symbol::LBRACKET), expr_parser, skip(token::symbol::RBRACKET),
+    skip(token::symbol::ASSIGN), expr_parser);
 }  // namespace lua::parser

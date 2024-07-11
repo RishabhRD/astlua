@@ -84,7 +84,7 @@ test("name list parser") {
 }
 
 test("exp list parser") {
-  test_list_parser(exp_list_parser, token::keyword::FALSE,
+  test_list_parser(expr_list_parser, token::keyword::FALSE,
                    ast::expr(ast::false_t()));
 }
 
@@ -162,4 +162,17 @@ test("field_sep_parser") {
   pass(";", {token::symbol::SEMICOLON}, field_sep_parser, std::monostate(), 1);
   fail("", {}, field_sep_parser);
   fail("do", {token::keyword::DO}, field_sep_parser);
+}
+
+test("expr_field_parser") {
+  pass("['x'] = 2",
+       {token::symbol::LBRACKET, token::string("'x'"), token::symbol::RBRACKET,
+        token::symbol::ASSIGN, token::number("2")},
+       expr_field_parser,
+       ast::expr_field(ast::expr(ast::string("'x'")),
+                       ast::expr(ast::number("2"))),
+       5);
+  fail("['x']",
+       {token::symbol::LBRACKET, token::string("'x'"), token::symbol::RBRACKET},
+       expr_field_parser);
 }
