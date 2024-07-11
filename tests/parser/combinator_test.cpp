@@ -119,3 +119,10 @@ test("sequence") {
   fail("", {}, eq_false);
   fail("something else", {token::symbol::LT}, eq_false);
 }
+
+test("transform") {
+  auto parser = transform(parse_eq, [](auto) { return std::monostate(); });
+  pass("=", {token::symbol::EQ}, parser, std::monostate(), 1);
+  fail("/", {token::symbol::DIV}, parser);
+  fail("", {}, parser);
+}

@@ -160,4 +160,18 @@ template <typename Function, typename... Parser>
 inline auto sequence(Function f, Parser... p) {
   return __seq_details::parser_apply(always(std::move(f)), std::move(p)...);
 }
+
+template <typename Function, typename Parser>
+inline auto transform(Parser p, Function f) {
+  return [f_ = std::move(f), p_ = std::move(p)]<std::forward_iterator Iter>(
+             Iter begin, Iter end)
+             -> parsed<
+                 std::invoke_result_t<Function, parse_result_t<Parser, Iter>>,
+                 Iter> {
+    if (auto res = p_(begin, end)) {
+      return std::pair{f_(std::move(res->first)), res->second};
+    }
+    return std::nullopt;
+  };
+}
 }  // namespace lua::parser
