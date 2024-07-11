@@ -328,6 +328,15 @@ std::ostream& operator<<(std::ostream& os, for_in_stat const& x) {
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, fn_name const& x) {
+  os << "fn_name{name: " << x.name << ", dot_names: ";
+  print(os, x.dot_names);
+  os << ", colon_name: ";
+  print(os, x.colon_name);
+  os << "}";
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, fn_decl_stat const& x) {
   os << "fn_decl{name: " << x.name << ", fn: " << x.fn << "}";
   return os;

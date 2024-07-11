@@ -317,8 +317,16 @@ struct for_in_stat {
   friend bool operator==(for_in_stat const&, for_in_stat const&) = default;
 };
 
-struct fn_decl_stat {
+struct fn_name {
   std::string name;
+  std::vector<std::string> dot_names;
+  std::optional<std::string> colon_name;
+
+  friend bool operator==(fn_name const&, fn_name const&) = default;
+};
+
+struct fn_decl_stat {
+  fn_name name;
   fn_body fn;
   friend bool operator==(fn_decl_stat const&, fn_decl_stat const&) = default;
 };
@@ -384,6 +392,7 @@ std::ostream& operator<<(std::ostream&, else_code const&);
 std::ostream& operator<<(std::ostream&, if_stat const&);
 std::ostream& operator<<(std::ostream&, for_range_stat const&);
 std::ostream& operator<<(std::ostream&, for_in_stat const&);
+std::ostream& operator<<(std::ostream&, fn_name const&);
 std::ostream& operator<<(std::ostream&, fn_decl_stat const&);
 std::ostream& operator<<(std::ostream&, local_fn_decl_stat const&);
 std::ostream& operator<<(std::ostream&, var_decl_stat const&);
