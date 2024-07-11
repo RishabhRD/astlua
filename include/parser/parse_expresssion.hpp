@@ -50,4 +50,5 @@ inline auto vararg_parser = match(token::symbol::VARARG, ast::vararg());
 inline auto exp_parser =
     choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,
                       false_parser, vararg_parser);
+inline auto exp_list_parser = list_parser(exp_parser);
 }  // namespace lua::parser

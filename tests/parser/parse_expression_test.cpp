@@ -81,6 +81,11 @@ test("name list parser") {
                    std::string{"hello"});
 }
 
+test("exp list parser") {
+  test_list_parser(exp_list_parser, token::keyword::FALSE,
+                   ast::expr(ast::false_t()));
+}
+
 test("number_parser") {
   pass("name", {token::number("1")}, number_parser, ast::number{"1"}, 1);
   pass("name something", {token::number("1"), token::keyword::DO},
