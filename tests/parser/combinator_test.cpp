@@ -41,8 +41,10 @@ auto to_token_info(std::vector<token::token_t> const& tokens) {
   return infos;
 }
 
-auto pass(std::string_view desc, std::vector<lua::token::token_t> const& tokens,
+auto pass(std::string_view desc, std::vector<lua::token::token_t> tokens,
           auto f, auto const& res, std::size_t len) {
+  __desc::pass(desc, to_token_info(tokens), f, res, len);
+  tokens.push_back(token::illegal{});
   __desc::pass(desc, to_token_info(tokens), f, res, len);
 }
 

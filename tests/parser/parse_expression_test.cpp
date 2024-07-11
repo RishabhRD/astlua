@@ -41,8 +41,10 @@ auto to_token_info(std::vector<token::token_t> const& tokens) {
   return infos;
 }
 
-auto pass(std::string_view desc, std::vector<lua::token::token_t> const& tokens,
+auto pass(std::string_view desc, std::vector<lua::token::token_t> tokens,
           auto f, auto const& res, std::size_t len) {
+  __desc::pass(desc, to_token_info(tokens), f, res, len);
+  tokens.push_back(token::illegal());
   __desc::pass(desc, to_token_info(tokens), f, res, len);
 }
 
@@ -124,4 +126,33 @@ test("false_parser") {
        false_parser, ast::false_t{}, 1);
   fail("", {}, false_parser);
   fail("do", {token::keyword::DO}, false_parser);
+}
+
+test("fn_name_parser") {
+  pass("x", {token::identifier{"x"}}, fn_name_parser, ast::fn_name{"x", {}, {}},
+       1);
+  pass("x.", {token::identifier{"x"}, token::symbol::MEMBER}, fn_name_parser,
+       ast::fn_name{"x", {}, {}}, 1);
+  pass("x.y",
+       {token::identifier{"x"}, token::symbol::MEMBER, token::identifier{"y"}},
+       fn_name_parser, ast::fn_name{"x", {"y"}, {}}, 3);
+  pass("x.y.",
+       {token::identifier{"x"}, token::symbol::MEMBER, token::identifier{"y"},
+        token::symbol::MEMBER},
+       fn_name_parser, ast::fn_name{"x", {"y"}, {}}, 3);
+  pass("x.y.z",
+       {token::identifier{"x"}, token::symbol::MEMBER, token::identifier{"y"},
+        token::symbol::MEMBER, token::identifier{"z"}},
+       fn_name_parser, ast::fn_name{"x", {"y", "z"}, {}}, 5);
+  pass("x.y.z:",
+       {token::identifier{"x"}, token::symbol::MEMBER, token::identifier{"y"},
+        token::symbol::MEMBER, token::identifier{"z"}, token::symbol::COLON},
+       fn_name_parser, ast::fn_name{"x", {"y", "z"}, {}}, 5);
+  pass("x.y.z:w",
+       {token::identifier{"x"}, token::symbol::MEMBER, token::identifier{"y"},
+        token::symbol::MEMBER, token::identifier{"z"}, token::symbol::COLON,
+        token::identifier{"w"}},
+       fn_name_parser, ast::fn_name{"x", {"y", "z"}, {"w"}}, 7);
+  fail("", {}, fn_name_parser);
+  fail("illegal", {token::illegal{}}, fn_name_parser);
 }

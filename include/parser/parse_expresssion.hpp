@@ -6,6 +6,10 @@
 #include "token/token.hpp"
 
 namespace lua::parser {
+inline auto get_snd = [](auto const&, auto val) {
+  return val;
+};
+
 inline auto name_parser = match_if_then(
     [](auto const& name_token) {
       return std::holds_alternative<token::identifier>(name_token);
@@ -51,4 +55,13 @@ inline auto exp_parser =
     choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,
                       false_parser, vararg_parser);
 inline auto exp_list_parser = list_parser(exp_parser);
+
+inline auto fn_name_parser = sequence(
+    [](auto name, auto dot_names, auto colon_name) {
+      return ast::fn_name{std::move(name), std::move(dot_names),
+                          std::move(colon_name)};
+    },
+    name_parser,
+    zero_or_more(sequence(get_snd, skip(token::symbol::MEMBER), name_parser)),
+    maybe(sequence(get_snd, skip(token::symbol::COLON), name_parser)));
 }  // namespace lua::parser
