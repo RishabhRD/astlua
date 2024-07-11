@@ -66,7 +66,7 @@ inline auto choice(FirstParser first, RestParsers... rest) {
              Iter begin, Iter end) -> parsed<NodeType, Iter> {
     auto res = first_(begin, end);
     if (res)
-      return std::pair{static_cast<NodeType>(res->first), res->second};
+      return std::pair{NodeType{res->first}, res->second};
     return choice<NodeType>(rest_...)(begin, end);
   };
 }
