@@ -176,3 +176,10 @@ test("expr_field_parser") {
        {token::symbol::LBRACKET, token::string("'x'"), token::symbol::RBRACKET},
        expr_field_parser);
 }
+
+test("name_field_parser") {
+  pass("x = 2",
+       {token::identifier("x"), token::symbol::ASSIGN, token::number("2")},
+       name_field_parser, ast::name_field("x", ast::expr(ast::number("2"))), 3);
+  fail("x", {token::identifier("x")}, name_field_parser);
+}

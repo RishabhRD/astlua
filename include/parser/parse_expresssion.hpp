@@ -76,4 +76,10 @@ inline auto expr_field_parser = sequence(
     },
     skip(token::symbol::LBRACKET), expr_parser, skip(token::symbol::RBRACKET),
     skip(token::symbol::ASSIGN), expr_parser);
+
+inline auto name_field_parser = sequence(
+    [](auto key, auto, auto value) {
+      return ast::name_field{std::move(key), std::move(value)};
+    },
+    name_parser, skip(token::symbol::ASSIGN), expr_parser);
 }  // namespace lua::parser
