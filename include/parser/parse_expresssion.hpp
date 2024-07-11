@@ -24,4 +24,25 @@ inline auto name_list_parser = sequence(
     },
     name_parser, zero_or_more(comma_name_parser));
 
+inline auto number_parser = match_if_then(
+    [](auto const& token) {
+      return std::holds_alternative<token::number>(token);
+    },
+    [](auto token) {
+      return ast::number{std::get<token::number>(token).value};
+    });
+
+inline auto string_parser = match_if_then(
+    [](auto const& token) {
+      return std::holds_alternative<token::string>(token);
+    },
+    [](auto token) {
+      return ast::string{std::get<token::string>(token).value};
+    });
+
+inline auto nil_parser = match(token::keyword::NIL, ast::nil());
+inline auto true_parser = match(token::keyword::TRUE, ast::true_t());
+inline auto false_parser = match(token::keyword::FALSE, ast::false_t());
+inline auto vararg_parser = match(token::symbol::VARARG, ast::vararg());
+
 }  // namespace lua::parser
