@@ -66,4 +66,7 @@ inline auto fn_name_parser = sequence(
     name_parser,
     zero_or_more(sequence(get_snd2, skip(token::symbol::MEMBER), name_parser)),
     maybe(sequence(get_snd2, skip(token::symbol::COLON), name_parser)));
+
+inline auto field_sep_parser = choice<std::monostate>(
+    skip(token::symbol::COMMA), skip(token::symbol::SEMICOLON));
 }  // namespace lua::parser

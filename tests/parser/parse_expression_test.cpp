@@ -156,3 +156,10 @@ test("fn_name_parser") {
   fail("", {}, fn_name_parser);
   fail("illegal", {token::illegal{}}, fn_name_parser);
 }
+
+test("field_sep_parser") {
+  pass(",", {token::symbol::COMMA}, field_sep_parser, std::monostate(), 1);
+  pass(";", {token::symbol::SEMICOLON}, field_sep_parser, std::monostate(), 1);
+  fail("", {}, field_sep_parser);
+  fail("do", {token::keyword::DO}, field_sep_parser);
+}
