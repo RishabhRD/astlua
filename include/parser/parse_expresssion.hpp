@@ -15,15 +15,13 @@ inline auto name_parser = match_if_then(
     });
 
 inline auto list_parser(auto parser) {
-  auto comma_val_parser =
-      sequence([](auto, auto val) { return val; },
-               match(token::symbol::COMMA, std::monostate{}), parser);
-
+  auto comma_val_parser = sequence([](auto, auto val) { return val; },
+                                   skip(token::symbol::COMMA), parser);
   return sequence(
       [](auto val, auto lst) {
         return ast::list_1{std::move(val), std::move(lst)};
       },
-      std::move(parser), zero_or_more(comma_val_parser));
+      std::move(parser), zero_or_more(std::move(comma_val_parser)));
 }
 
 inline auto name_list_parser = list_parser(name_parser);

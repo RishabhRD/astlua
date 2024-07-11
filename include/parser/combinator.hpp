@@ -48,6 +48,10 @@ inline auto match(token::token_t token, Ret ast_node) {
   };
 }
 
+inline auto skip(token::token_t token) {
+  return match(std::move(token), std::monostate{});
+}
+
 template <typename NodeType>
 inline auto choice() {
   return []<typename Iter>(Iter, Iter) -> parsed<NodeType, Iter> {
