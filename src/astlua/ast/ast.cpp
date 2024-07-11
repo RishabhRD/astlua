@@ -5,11 +5,8 @@
 
 namespace lua::ast {
 template <typename T>
-std::ostream& print(std::ostream& os, std::unique_ptr<T> const& x) {
-  if (x == nullptr)
-    os << "null";
-  else
-    os << *x;
+std::ostream& print(std::ostream& os, handle<T> const& x) {
+  os << x;
   return os;
 }
 

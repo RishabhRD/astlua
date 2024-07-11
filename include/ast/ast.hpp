@@ -1,24 +1,57 @@
 #pragma once
 
+#include <cstddef>
 #include <memory>
 #include <optional>
 #include <ostream>
 #include <string>
 #include <variant>
 #include <vector>
-#include "functional.hpp"
 
 namespace lua::ast {
-namespace __ast_details {
+
 template <typename T>
-bool is_equal(std::unique_ptr<T> const& a, std::unique_ptr<T> const& b) {
-  if (a == nullptr && b == nullptr)
-    return true;
-  if (a != nullptr && b != nullptr)
-    return *a == *b;
-  return false;
-}
-}  // namespace __ast_details
+class handle {
+  std::unique_ptr<T> handle_;
+
+ public:
+  handle(std::unique_ptr<T> ptr_handle) : handle_(std::move(ptr_handle)) {}
+
+  handle(T value) : handle_(std::make_unique<T>(std::move(value))) {}
+
+  handle(handle&& other) : handle_(std::move(other.handle_)) {}
+
+  handle(handle const& other)
+      : handle_(other.handle_ ? std::make_unique<T>(*other.handle_) : nullptr) {
+  }
+
+  handle& operator=(handle other) {
+    this->handle_ = std::move(other.handle_);
+    return *this;
+  }
+
+  T& operator*() { return *handle_; }
+
+  T& operator*() const { return *handle_; }
+
+  bool operator==(std::nullptr_t) const { return handle_ == nullptr; }
+
+  bool operator==(handle const& other) const {
+    if (handle_ == nullptr && other.handle_ == nullptr)
+      return true;
+    if (handle_ != nullptr && other.handle_ != nullptr)
+      return *handle_ == *(other.handle_);
+    return false;
+  }
+
+  operator bool() const { return handle_ != nullptr; }
+};
+
+template <typename T>
+handle(std::unique_ptr<T>) -> handle<T>;
+
+template <typename T>
+handle(T) -> handle<T>;
 
 // Forward declarations
 struct statement;
@@ -26,15 +59,13 @@ struct prefix_expr;
 struct expr;
 
 // Handle types
-using prefix_handle = std::unique_ptr<prefix_expr>;
-using expr_handle = std::unique_ptr<expr>;
+using prefix_handle = handle<prefix_expr>;
+using expr_handle = handle<expr>;
 
 struct return_stat {
   expr_handle expr;
 
-  friend bool operator==(return_stat const& a, return_stat const& b) {
-    return __ast_details::is_equal(a.expr, b.expr);
-  }
+  friend bool operator==(return_stat const&, return_stat const&) = default;
 };
 
 // Basic data structures
@@ -93,20 +124,15 @@ struct expression_var {
   prefix_handle field;
   expr_handle property;
 
-  friend bool operator==(expression_var const& a, expression_var const& b) {
-    return __ast_details::is_equal(a.field, b.field) &&
-           __ast_details::is_equal(a.property, b.property);
-  }
+  friend bool operator==(expression_var const&,
+                         expression_var const&) = default;
 };
 
 struct name_var {
   prefix_handle field;
   std::string property;
 
-  friend bool operator==(name_var const& a, name_var const& b) {
-    return __ast_details::is_equal(a.field, b.field) &&
-           a.property == b.property;
-  }
+  friend bool operator==(name_var const&, name_var const&) = default;
 };
 
 using var = std::variant<std::string, expression_var, name_var>;
@@ -120,27 +146,20 @@ struct expr_field {
   expr_handle key;
   expr_handle value;
 
-  friend bool operator==(expr_field const& a, expr_field const& b) {
-    return __ast_details::is_equal(a.key, b.key) &&
-           __ast_details::is_equal(a.value, b.value);
-  }
+  friend bool operator==(expr_field const&, expr_field const&) = default;
 };
 
 struct name_field {
   std::string key;
   expr_handle value;
 
-  friend bool operator==(name_field const& a, name_field const& b) {
-    return a.key == b.key && __ast_details::is_equal(a.value, b.value);
-  }
+  friend bool operator==(name_field const&, name_field const&) = default;
 };
 
 struct value_field {
   expr_handle value;
 
-  friend bool operator==(value_field const& a, value_field const& b) {
-    return __ast_details::is_equal(a.value, b.value);
-  }
+  friend bool operator==(value_field const&, value_field const&) = default;
 };
 
 using field = std::variant<expr_field, name_field, value_field>;
@@ -167,10 +186,7 @@ struct fn_call {
   prefix_handle prefix;
   std::optional<std::string> field_name;
 
-  friend bool operator==(fn_call const& a, fn_call const& b) {
-    return __ast_details::is_equal(a.prefix, b.prefix) &&
-           a.field_name == b.field_name;
-  }
+  friend bool operator==(fn_call const&, fn_call const&) = default;
 };
 
 struct nil {
@@ -212,40 +228,24 @@ struct binary_expr {
   expr_handle left_expr;
   expr_handle right_expr;
 
-  friend bool operator==(binary_expr const& a, binary_expr const& b) {
-    return a.op == b.op && __ast_details::is_equal(a.left_expr, b.left_expr) &&
-           __ast_details::is_equal(a.right_expr, b.right_expr);
-  }
+  friend bool operator==(binary_expr const&, binary_expr const&) = default;
 };
 
 struct unary_expr {
   unary_op op;
   expr_handle expr;
 
-  friend bool operator==(unary_expr const& a, unary_expr const& b) {
-    return a.op == b.op && __ast_details::is_equal(a.expr, b.expr);
-  }
+  friend bool operator==(unary_expr const&, unary_expr const&) = default;
 };
 
 struct prefix_expr {
   std::variant<var, fn_call, expr_handle> choices;
 
-  friend bool operator==(prefix_expr const& a, prefix_expr const& b) {
-    return std::visit(
-        nostd::overload{
-            [](auto const&, auto const&) { return false; },
-            [](var const& x, var const& y) { return x == y; },
-            [](fn_call const& x, fn_call const& y) { return x == y; },
-            [](expr_handle const& x, expr_handle const& y) {
-              return __ast_details::is_equal(x, y);
-            },
-        },
-        a.choices, b.choices);
-  };
+  friend bool operator==(prefix_expr const&, prefix_expr const&) = default;
 };
 
 struct expr {
-  std::variant<nil, false_t, true_t, number, fn, prefix_expr, table,
+  std::variant<nil, false_t, true_t, number, string, fn, prefix_expr, table,
                binary_expr, unary_expr, vararg>
       choices;
 
@@ -395,6 +395,15 @@ std::ostream& operator<<(std::ostream& os, list_1<T> const& lst) {
   for (auto const& x : lst.more)
     os << x << " ";
   os << "]";
+  return os;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, handle<T> const& lst) {
+  if (lst == nullptr)
+    os << "null";
+  else
+    os << *lst;
   return os;
 }
 }  // namespace lua::ast
