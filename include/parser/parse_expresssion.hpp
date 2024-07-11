@@ -6,7 +6,9 @@
 #include "token/token.hpp"
 
 namespace lua::parser {
-inline auto get_snd = [](auto const&, auto val) {
+// Postcondition:
+//  - get 2nd argument for 2 argument function
+inline auto get_snd2 = [](auto const&, auto val) {
   return val;
 };
 
@@ -19,8 +21,8 @@ inline auto name_parser = match_if_then(
     });
 
 inline auto list_parser(auto parser) {
-  auto comma_val_parser = sequence([](auto, auto val) { return val; },
-                                   skip(token::symbol::COMMA), parser);
+  auto comma_val_parser =
+      sequence(get_snd2, skip(token::symbol::COMMA), parser);
   return sequence(
       [](auto val, auto lst) {
         return ast::list_1{std::move(val), std::move(lst)};
@@ -62,6 +64,6 @@ inline auto fn_name_parser = sequence(
                           std::move(colon_name)};
     },
     name_parser,
-    zero_or_more(sequence(get_snd, skip(token::symbol::MEMBER), name_parser)),
-    maybe(sequence(get_snd, skip(token::symbol::COLON), name_parser)));
+    zero_or_more(sequence(get_snd2, skip(token::symbol::MEMBER), name_parser)),
+    maybe(sequence(get_snd2, skip(token::symbol::COLON), name_parser)));
 }  // namespace lua::parser
