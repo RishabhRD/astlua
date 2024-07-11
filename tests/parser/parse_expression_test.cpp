@@ -183,3 +183,10 @@ test("name_field_parser") {
        name_field_parser, ast::name_field("x", ast::expr(ast::number("2"))), 3);
   fail("x", {token::identifier("x")}, name_field_parser);
 }
+
+test("value_field parser") {
+  pass("2", {token::number("2")}, value_field_parser,
+       ast::value_field(ast::expr(ast::number("2"))), 1);
+  fail("illegal", {token::illegal{}}, value_field_parser);
+  fail("", {}, value_field_parser);
+}
