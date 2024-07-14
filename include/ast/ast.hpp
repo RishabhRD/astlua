@@ -72,10 +72,12 @@ struct return_stat {
   friend bool operator==(return_stat const&, return_stat const&) = default;
 };
 
+using last_stat = std::variant<break_stat, return_stat>;
+
 // Basic data structures
 struct block {
   std::vector<statement> stats;
-  std::optional<return_stat> return_statement;
+  std::optional<last_stat> last_statement;
 
   friend bool operator==(block const&, block const&) = default;
 };

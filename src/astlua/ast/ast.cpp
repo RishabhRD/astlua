@@ -28,7 +28,7 @@ std::ostream& print(std::ostream& os, std::vector<T> const& vec) {
   return os;
 }
 
-std::ostream& operator<<(std::ostream& os, break_stat) {
+std::ostream& operator<<(std::ostream& os, break_stat const&) {
   return os << "break_stat{}";
 }
 
@@ -39,11 +39,20 @@ std::ostream& operator<<(std::ostream& os, return_stat const& b) {
   return os;
 }
 
+std::ostream& print(std::ostream& os, std::optional<last_stat> const& stat) {
+  if (stat == std::nullopt) {
+    os << "null";
+  } else {
+    std::visit([&os](auto const& s) { os << s; }, *stat);
+  }
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, block const& b) {
   os << "block{statements: ";
   print(os, b.stats);
   os << ", return_statement: ";
-  print(os, b.return_statement);
+  print(os, b.last_statement);
   os << "}";
   return os;
 }
