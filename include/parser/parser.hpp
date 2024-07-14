@@ -32,12 +32,12 @@ inline auto name_parser = match_if_then(
       return std::get<token::identifier>(name_token).value;
     });
 
-inline auto sep_val_parser(auto token, auto parser) {
-  return sequence(get_snd2, skip(std::move(token)), parser);
+inline auto sep_val_parser(auto sep_parser, auto parser) {
+  return sequence(get_snd2, sep_parser, parser);
 }
 
-inline auto list_parser(auto parser) {
-  auto comma_parser = sep_val_parser(token::symbol::COMMA, parser);
+inline auto list_parser(auto sep_parser, auto parser) {
+  auto comma_parser = sep_val_parser(std::move(sep_parser), parser);
   return sequence(
       [](auto val, auto lst) {
         return ast::list_1{std::move(val), std::move(lst)};
@@ -45,7 +45,8 @@ inline auto list_parser(auto parser) {
       std::move(parser), zero_or_more(std::move(comma_parser)));
 }
 
-inline auto name_list_parser = list_parser(name_parser);
+inline auto name_list_parser =
+    list_parser(skip(token::symbol::COMMA), name_parser);
 
 inline auto number_parser = match_if_then(
     [](auto const& token) {
@@ -68,7 +69,8 @@ inline auto true_parser = match(token::keyword::TRUE, ast::true_t());
 inline auto false_parser = match(token::keyword::FALSE, ast::false_t());
 inline auto vararg_parser = match(token::symbol::VARARG, ast::vararg());
 
-inline auto expr_list_parser = list_parser(expr_parser);
+inline auto expr_list_parser =
+    list_parser(skip(token::symbol::COMMA), expr_parser);
 
 inline auto fn_name_parser = sequence(
     [](auto name, auto dot_names, auto colon_name) {
