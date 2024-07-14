@@ -168,7 +168,7 @@ inline auto transform(Parser p, Function f) {
              -> parsed<
                  std::invoke_result_t<Function, parse_result_t<Parser, Iter>>,
                  Iter> {
-    if (auto res = p_(begin, end)) {
+    if (auto res = p_(begin, end); res.has_value()) {
       return std::pair{f_(std::move(res->first)), res->second};
     }
     return std::nullopt;

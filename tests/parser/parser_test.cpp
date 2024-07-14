@@ -270,3 +270,31 @@ test("var_decl_stat_parser") {
                                                 {ast::expr{ast::number{"3"}}}}},
       8);
 }
+
+test("stat_list_parser") {
+  pass("", {}, stat_list_parser, std::vector<ast::statement>{}, 0);
+  pass("local x", {token::keyword::LOCAL, token::identifier("x")},
+       stat_list_parser,
+       std::vector<ast::statement>{
+           ast::statement{ast::var_decl_stat{{"x"}, {}}},
+       },
+       2);
+  pass("local x local y",
+       {token::keyword::LOCAL, token::identifier("x"), token::keyword::LOCAL,
+        token::identifier("y")},
+       stat_list_parser,
+       std::vector<ast::statement>{
+           ast::statement{ast::var_decl_stat{{"x"}, {}}},
+           ast::statement{ast::var_decl_stat{{"y"}, {}}},
+       },
+       4);
+  pass("local x; local y",
+       {token::keyword::LOCAL, token::identifier("x"), token::symbol::SEMICOLON,
+        token::keyword::LOCAL, token::identifier("y")},
+       stat_list_parser,
+       std::vector<ast::statement>{
+           ast::statement{ast::var_decl_stat{{"x"}, {}}},
+           ast::statement{ast::var_decl_stat{{"y"}, {}}},
+       },
+       5);
+}
