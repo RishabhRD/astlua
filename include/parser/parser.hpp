@@ -19,6 +19,11 @@ inline auto expr_parser_fn(Iter begin, Iter end) -> parsed<ast::expr, Iter>;
 
 inline auto expr_parser = lift(expr_parser_fn);
 
+template <std::forward_iterator Iter>
+inline auto stat_parser_fn(Iter begin, Iter end) -> parsed<ast::expr, Iter>;
+
+inline auto stat_parser = lift(stat_parser_fn);
+
 inline auto name_parser = match_if_then(
     [](auto const& name_token) {
       return std::holds_alternative<token::identifier>(name_token);
@@ -112,14 +117,28 @@ inline auto table_parser = sequence(
     skip(token::symbol::LBRACE), maybe(field_list_parser),
     skip(token::symbol::RBRACE));
 
+inline auto var_decl_stat_parser = sequence(
+    [](auto, auto names, auto exprs) {
+      return ast::var_decl_stat{std::move(names), std::move(exprs)};
+    },
+    skip(token::keyword::LOCAL), name_list_parser,
+    maybe(sequence(get_snd2, skip(token::symbol::ASSIGN), expr_list_parser)));
+
 namespace __parser_details {
 inline auto expr_parser_impl =
     choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,
                       false_parser, vararg_parser, table_parser);
-}
+
+inline auto stat_parser_impl = choice<ast::expr>(var_decl_stat_parser);
+}  // namespace __parser_details
 
 template <std::forward_iterator Iter>
 inline auto expr_parser_fn(Iter begin, Iter end) -> parsed<ast::expr, Iter> {
   return __parser_details::expr_parser_impl(begin, end);
+}
+
+template <std::forward_iterator Iter>
+inline auto stat_parser_fn(Iter begin, Iter end) -> parsed<ast::expr, Iter> {
+  return __parser_details::stat_parser_impl(begin, end);
 }
 }  // namespace lua::parser

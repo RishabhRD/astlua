@@ -244,3 +244,29 @@ test("table_parser") {
   pass("{}", {token::symbol::LBRACE, token::symbol::RBRACE}, table_parser,
        ast::table{}, 2);
 }
+
+test("var_decl_stat_parser") {
+  pass("local x", {token::keyword::LOCAL, token::identifier("x")},
+       var_decl_stat_parser, ast::var_decl_stat{{"x"}, {}}, 2);
+  pass("local x,y",
+       {token::keyword::LOCAL, token::identifier("x"), token::symbol::COMMA,
+        token::identifier("y")},
+       var_decl_stat_parser, ast::var_decl_stat{{"x", {"y"}}, {}}, 4);
+  pass("local x,y=2",
+       {token::keyword::LOCAL, token::identifier("x"), token::symbol::COMMA,
+        token::identifier("y"), token::symbol::ASSIGN, token::number("2")},
+       var_decl_stat_parser,
+       ast::var_decl_stat{{"x", {"y"}},
+                          ast::list_1<ast::expr>{ast::expr{ast::number{"2"}}}},
+       6);
+  pass(
+      "local x,y=2,3",
+      {token::keyword::LOCAL, token::identifier("x"), token::symbol::COMMA,
+       token::identifier("y"), token::symbol::ASSIGN, token::number("2"),
+       token::symbol::COMMA, token::number("3")},
+      var_decl_stat_parser,
+      ast::var_decl_stat{{"x", {"y"}},
+                         ast::list_1<ast::expr>{ast::expr{ast::number{"2"}},
+                                                {ast::expr{ast::number{"3"}}}}},
+      8);
+}
