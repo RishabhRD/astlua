@@ -62,6 +62,10 @@ struct expr;
 using prefix_handle = handle<prefix_expr>;
 using expr_handle = handle<expr>;
 
+struct break_stat {
+  friend bool operator==(break_stat const&, break_stat const&) = default;
+};
+
 struct return_stat {
   expr_handle expr;
 
@@ -356,6 +360,7 @@ struct statement {
 // Root of AST
 using ast = block;
 
+std::ostream& operator<<(std::ostream&, break_stat const&);
 std::ostream& operator<<(std::ostream&, return_stat const&);
 std::ostream& operator<<(std::ostream&, block const&);
 std::ostream& operator<<(std::ostream&, unary_op const&);

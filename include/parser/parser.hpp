@@ -33,12 +33,12 @@ inline auto name_parser = match_if_then(
       return std::get<token::identifier>(name_token).value;
     });
 
-inline auto sep_val_parser(auto sep_parser, auto parser) {
+inline auto snd(auto sep_parser, auto parser) {
   return sequence(get_snd2, sep_parser, parser);
 }
 
 inline auto list_parser(auto sep_parser, auto parser) {
-  auto comma_parser = sep_val_parser(std::move(sep_parser), parser);
+  auto comma_parser = snd(std::move(sep_parser), parser);
   return sequence(
       [](auto val, auto lst) {
         return ast::list_1{std::move(val), std::move(lst)};

@@ -28,6 +28,10 @@ std::ostream& print(std::ostream& os, std::vector<T> const& vec) {
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, break_stat) {
+  return os << "break_stat{}";
+}
+
 std::ostream& operator<<(std::ostream& os, return_stat const& b) {
   os << "return_stat{";
   print(os, b.expr);
