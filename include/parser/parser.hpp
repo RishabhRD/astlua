@@ -8,6 +8,16 @@
 #include "token/token.hpp"
 
 namespace lua::parser {
+template <typename T>
+auto to_vector(std::optional<ast::list_1<T>> lst) -> std::vector<T> {
+  if (lst.has_value()) {
+    lst->more.insert(std::begin(lst->more), std::move(lst->first));
+    return std::move(lst->more);
+  } else {
+    return {};
+  }
+}
+
 // Postcondition:
 //  - get 2nd argument for 2 argument function
 inline auto get_snd2 = [](auto const&, auto val) {
@@ -138,6 +148,12 @@ inline auto stat_list_parser = transform(
     });
 
 inline auto break_stat_parser = match(token::keyword::BREAK, ast::break_stat{});
+
+inline auto return_stat_parser = sequence(
+    [](auto, auto expr) {
+      return ast::return_stat{to_vector(std::move(expr))};
+    },
+    skip(token::keyword::RETURN), maybe(expr_list_parser));
 
 namespace __parser_details {
 inline auto expr_parser_impl =

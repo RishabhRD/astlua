@@ -67,7 +67,7 @@ struct break_stat {
 };
 
 struct return_stat {
-  expr_handle expr;
+  std::vector<expr> exprs;
 
   friend bool operator==(return_stat const&, return_stat const&) = default;
 };

@@ -34,7 +34,7 @@ std::ostream& operator<<(std::ostream& os, break_stat const&) {
 
 std::ostream& operator<<(std::ostream& os, return_stat const& b) {
   os << "return_stat{";
-  print(os, b.expr);
+  print(os, b.exprs);
   os << "}";
   return os;
 }

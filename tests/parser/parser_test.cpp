@@ -307,3 +307,19 @@ test("stat_list_parser") {
        },
        5);
 }
+
+test("return_stat_parser") {
+  pass("return", {token::keyword::RETURN}, return_stat_parser,
+       ast::return_stat{}, 1);
+  pass("return 2", {token::keyword::RETURN, token::number{"2"}},
+       return_stat_parser, ast::return_stat{{ast::expr(ast::number("2"))}}, 2);
+  pass("return 2,3",
+       {token::keyword::RETURN, token::number{"2"}, token::symbol::COMMA,
+        token::number{"3"}},
+       return_stat_parser,
+       ast::return_stat{{
+           ast::expr(ast::number("2")),
+           ast::expr(ast::number("3")),
+       }},
+       4);
+}
