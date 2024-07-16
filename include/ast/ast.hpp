@@ -216,9 +216,15 @@ struct vararg {
   friend bool operator==(vararg, vararg) = default;
 };
 
-struct fn_body {
-  std::vector<std::string> params;
+struct param_list {
+  std::vector<std::string> args;
   bool has_vararg;
+
+  friend bool operator==(param_list const&, param_list const&) = default;
+};
+
+struct fn_body {
+  param_list params;
   block fn_block;
 
   friend bool operator==(fn_body const&, fn_body const&) = default;
@@ -384,6 +390,7 @@ std::ostream& operator<<(std::ostream&, false_t const&);
 std::ostream& operator<<(std::ostream&, true_t const&);
 std::ostream& operator<<(std::ostream&, number const&);
 std::ostream& operator<<(std::ostream&, vararg const&);
+std::ostream& operator<<(std::ostream&, param_list const&);
 std::ostream& operator<<(std::ostream&, fn_body const&);
 std::ostream& operator<<(std::ostream&, fn const&);
 std::ostream& operator<<(std::ostream&, binary_expr const&);

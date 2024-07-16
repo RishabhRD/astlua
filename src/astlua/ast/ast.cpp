@@ -246,10 +246,15 @@ std::ostream& operator<<(std::ostream& os, vararg const&) {
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, param_list const& x) {
+  os << "param_list{args: ";
+  print(os, x.args);
+  os << ", has_vararg: " << x.has_vararg << "}";
+  return os;
+}
+
 std::ostream& operator<<(std::ostream& os, fn_body const& x) {
-  os << "fn_body{params: ";
-  print(os, x.params);
-  os << " ,has_vararg: " << x.has_vararg << ", fn_block: " << x.fn_block << "}";
+  os << "fn_body{params: " << x.params << ", fn_block: " << x.fn_block << "}";
   return os;
 }
 
