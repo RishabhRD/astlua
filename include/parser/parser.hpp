@@ -9,7 +9,7 @@
 
 namespace lua::parser {
 template <typename T>
-auto to_vector(std::optional<ast::list_1<T>> lst) -> std::vector<T> {
+auto list_1_to_vector(std::optional<ast::list_1<T>> lst) -> std::vector<T> {
   if (lst.has_value()) {
     lst->more.insert(std::begin(lst->more), std::move(lst->first));
     return std::move(lst->more);
@@ -139,19 +139,13 @@ inline auto var_decl_stat_parser = sequence(
 
 inline auto stat_list_parser = transform(
     maybe(list_parser(maybe(skip(token::symbol::SEMICOLON)), stat_parser)),
-    [](auto stats_opt) -> std::vector<ast::statement> {
-      if (!stats_opt.has_value())
-        return {};
-      auto res = std::move(stats_opt->more);
-      res.insert(std::begin(res), std::move(stats_opt->first));
-      return res;
-    });
+    lift(list_1_to_vector));
 
 inline auto break_stat_parser = match(token::keyword::BREAK, ast::break_stat{});
 
 inline auto return_stat_parser = sequence(
     [](auto, auto expr) {
-      return ast::return_stat{to_vector(std::move(expr))};
+      return ast::return_stat{list_1_to_vector(std::move(expr))};
     },
     skip(token::keyword::RETURN), maybe(expr_list_parser));
 
