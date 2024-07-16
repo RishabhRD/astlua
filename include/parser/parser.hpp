@@ -137,9 +137,8 @@ inline auto var_decl_stat_parser = sequence(
     skip(token::keyword::LOCAL), name_list_parser,
     maybe(sequence(get_snd2, skip(token::symbol::ASSIGN), expr_list_parser)));
 
-inline auto stat_list_parser = transform(
-    maybe(list_parser(maybe(skip(token::symbol::SEMICOLON)), stat_parser)),
-    lift(list_1_to_vector));
+inline auto stat_list_parser = zero_or_more(
+    snd(zero_or_more(skip(token::symbol::SEMICOLON)), stat_parser));
 
 inline auto break_stat_parser = match(token::keyword::BREAK, ast::break_stat{});
 
@@ -164,6 +163,13 @@ inline auto vararg_param_list_parser = transform(
 
 inline auto param_list_parser =
     choice<ast::param_list>(name_param_list_parser, vararg_param_list_parser);
+
+// inline auto fn_body_parser = sequence(
+//     [](auto, auto params, auto, auto block, auto) {
+//       return ast::fn_body{std::move(params), std::move(block)};
+//     },
+//     skip(token::symbol::LPAREN), maybe(param_list_parser),
+//     skip(token::symbol::RPAREN), block_parser, skip(token::keyword::END));
 
 namespace __parser_details {
 inline auto expr_parser_impl =
