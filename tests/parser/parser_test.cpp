@@ -128,6 +128,15 @@ test("false_parser") {
   fail("do", {token::keyword::DO}, false_parser);
 }
 
+test("break_stat_parser") {
+  pass("name", {token::keyword::BREAK}, break_stat_parser, ast::break_stat{},
+       1);
+  pass("name something", {token::keyword::BREAK, token::keyword::DO},
+       break_stat_parser, ast::break_stat{}, 1);
+  fail("", {}, break_stat_parser);
+  fail("do", {token::keyword::DO}, break_stat_parser);
+}
+
 test("fn_name_parser") {
   pass("x", {token::identifier{"x"}}, fn_name_parser, ast::fn_name{"x", {}, {}},
        1);

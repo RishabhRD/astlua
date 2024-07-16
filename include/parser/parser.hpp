@@ -137,6 +137,8 @@ inline auto stat_list_parser = transform(
       return res;
     });
 
+inline auto break_stat_parser = match(token::keyword::BREAK, ast::break_stat{});
+
 namespace __parser_details {
 inline auto expr_parser_impl =
     choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,
