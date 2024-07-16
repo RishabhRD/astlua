@@ -151,6 +151,13 @@ inline auto return_stat_parser = sequence(
 inline auto last_stat_parser =
     choice<ast::last_stat>(return_stat_parser, break_stat_parser);
 
+inline auto block_parser = sequence(
+    [](auto stats, auto const&, auto last_stat, auto const&) {
+      return ast::block(std::move(stats), std::move(last_stat));
+    },
+    stat_list_parser, zero_or_more(skip(token::symbol::SEMICOLON)),
+    maybe(last_stat_parser), zero_or_more(skip(token::symbol::SEMICOLON)));
+
 inline auto name_param_list_parser = sequence(
     [](auto name_list, auto vararg) {
       return ast::name_param_list{std::move(name_list), vararg.has_value()};

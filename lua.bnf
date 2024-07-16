@@ -1,4 +1,4 @@
-chunk → (";"* stat)* laststat? ";"? ;
+chunk → (";"* stat)* ";"* laststat? ";"*? ;
 
 block → chunk ;
 

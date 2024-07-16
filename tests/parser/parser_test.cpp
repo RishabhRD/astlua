@@ -345,3 +345,38 @@ test("param_list_parser") {
   pass("...", {token::symbol::VARARG}, param_list_parser,
        ast::param_list{ast::vararg_param_list{}}, 1);
 }
+
+test("block_parser") {
+  pass(";;local x",
+       {token::symbol::SEMICOLON, token::symbol::SEMICOLON,
+        token::keyword::LOCAL, token::identifier{"x"}},
+       block_parser,
+       ast::block({ast::statement{ast::var_decl_stat({std::string{"x"}}, {})}},
+                  {}),
+       4);
+  pass(
+      ";;local x;",
+      {token::symbol::SEMICOLON, token::symbol::SEMICOLON,
+       token::keyword::LOCAL, token::identifier{"x"}, token::symbol::SEMICOLON},
+      block_parser,
+      ast::block({ast::statement{ast::var_decl_stat({std::string{"x"}}, {})}},
+                 {}),
+      5);
+  pass(";;local x;;return",
+       {token::symbol::SEMICOLON, token::symbol::SEMICOLON,
+        token::keyword::LOCAL, token::identifier{"x"}, token::symbol::SEMICOLON,
+        token::symbol::SEMICOLON, token::keyword::RETURN},
+       block_parser,
+       ast::block({ast::statement{ast::var_decl_stat({std::string{"x"}}, {})}},
+                  ast::last_stat{ast::return_stat()}),
+       7);
+  pass(";;local x;;return;;",
+       {token::symbol::SEMICOLON, token::symbol::SEMICOLON,
+        token::keyword::LOCAL, token::identifier{"x"}, token::symbol::SEMICOLON,
+        token::symbol::SEMICOLON, token::keyword::RETURN,
+        token::symbol::SEMICOLON, token::symbol::SEMICOLON},
+       block_parser,
+       ast::block({ast::statement{ast::var_decl_stat({std::string{"x"}}, {})}},
+                  ast::last_stat{ast::return_stat()}),
+       9);
+}
