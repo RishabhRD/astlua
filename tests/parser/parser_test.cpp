@@ -323,3 +323,10 @@ test("return_stat_parser") {
        }},
        4);
 }
+
+test("last_stat_parser") {
+  pass("return", {token::keyword::RETURN}, last_stat_parser,
+       ast::last_stat{ast::return_stat{}}, 1);
+  pass("break", {token::keyword::BREAK}, last_stat_parser,
+       ast::last_stat{ast::break_stat{}}, 1);
+}

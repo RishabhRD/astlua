@@ -149,6 +149,9 @@ inline auto return_stat_parser = sequence(
     },
     skip(token::keyword::RETURN), maybe(expr_list_parser));
 
+inline auto last_stat_parser =
+    choice<ast::last_stat>(return_stat_parser, break_stat_parser);
+
 namespace __parser_details {
 inline auto expr_parser_impl =
     choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,
