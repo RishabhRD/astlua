@@ -152,6 +152,19 @@ inline auto return_stat_parser = sequence(
 inline auto last_stat_parser =
     choice<ast::last_stat>(return_stat_parser, break_stat_parser);
 
+inline auto name_param_list_parser = sequence(
+    [](auto name_list, auto vararg) {
+      return ast::name_param_list{std::move(name_list), vararg.has_value()};
+    },
+    name_list_parser,
+    maybe(snd(skip(token::symbol::COMMA), skip(token::symbol::VARARG))));
+
+inline auto vararg_param_list_parser = transform(
+    skip(token::symbol::VARARG), [](auto) { return ast::vararg_param_list{}; });
+
+inline auto param_list_parser =
+    choice<ast::param_list>(name_param_list_parser, vararg_param_list_parser);
+
 namespace __parser_details {
 inline auto expr_parser_impl =
     choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,

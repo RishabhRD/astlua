@@ -246,10 +246,18 @@ std::ostream& operator<<(std::ostream& os, vararg const&) {
   return os;
 }
 
+std::ostream& operator<<(std::ostream& os, name_param_list const& x) {
+  os << "param_list{args: " << x.args << ", has_vararg: " << x.has_vararg
+     << "}";
+  return os;
+}
+
+std::ostream& operator<<(std::ostream& os, vararg_param_list const&) {
+  return os << "vararg_param_list{}";
+}
+
 std::ostream& operator<<(std::ostream& os, param_list const& x) {
-  os << "param_list{args: ";
-  print(os, x.args);
-  os << ", has_vararg: " << x.has_vararg << "}";
+  std::visit([&os](auto const& a) { os << a; }, x);
   return os;
 }
 

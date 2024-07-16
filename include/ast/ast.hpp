@@ -216,12 +216,20 @@ struct vararg {
   friend bool operator==(vararg, vararg) = default;
 };
 
-struct param_list {
-  std::vector<std::string> args;
+struct name_param_list {
+  list_1<std::string> args;
   bool has_vararg;
 
-  friend bool operator==(param_list const&, param_list const&) = default;
+  friend bool operator==(name_param_list const&,
+                         name_param_list const&) = default;
 };
+
+struct vararg_param_list {
+  friend bool operator==(vararg_param_list const&,
+                         vararg_param_list const&) = default;
+};
+
+using param_list = std::variant<name_param_list, vararg_param_list>;
 
 struct fn_body {
   param_list params;
@@ -390,6 +398,8 @@ std::ostream& operator<<(std::ostream&, false_t const&);
 std::ostream& operator<<(std::ostream&, true_t const&);
 std::ostream& operator<<(std::ostream&, number const&);
 std::ostream& operator<<(std::ostream&, vararg const&);
+std::ostream& operator<<(std::ostream&, name_param_list const&);
+std::ostream& operator<<(std::ostream&, vararg_param_list const&);
 std::ostream& operator<<(std::ostream&, param_list const&);
 std::ostream& operator<<(std::ostream&, fn_body const&);
 std::ostream& operator<<(std::ostream&, fn const&);

@@ -330,3 +330,18 @@ test("last_stat_parser") {
   pass("break", {token::keyword::BREAK}, last_stat_parser,
        ast::last_stat{ast::break_stat{}}, 1);
 }
+
+test("param_list_parser") {
+  pass("x", {token::identifier{"x"}}, param_list_parser,
+       ast::param_list{
+           ast::name_param_list{ast::list_1<std::string>{"x"}, false}},
+       1);
+  pass("x,...",
+       {token::identifier{"x"}, token::symbol::COMMA, token::symbol::VARARG},
+       param_list_parser,
+       ast::param_list{
+           ast::name_param_list{ast::list_1<std::string>{"x"}, true}},
+       3);
+  pass("...", {token::symbol::VARARG}, param_list_parser,
+       ast::param_list{ast::vararg_param_list{}}, 1);
+}
