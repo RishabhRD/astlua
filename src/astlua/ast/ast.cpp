@@ -262,7 +262,9 @@ std::ostream& operator<<(std::ostream& os, param_list const& x) {
 }
 
 std::ostream& operator<<(std::ostream& os, fn_body const& x) {
-  os << "fn_body{params: " << x.params << ", fn_block: " << x.fn_block << "}";
+  os << "fn_body{params: ";
+  print(os, x.params);
+  os << ", fn_block: " << x.fn_block << "}";
   return os;
 }
 

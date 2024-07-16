@@ -232,7 +232,7 @@ struct vararg_param_list {
 using param_list = std::variant<name_param_list, vararg_param_list>;
 
 struct fn_body {
-  param_list params;
+  std::optional<param_list> params;
   block fn_block;
 
   friend bool operator==(fn_body const&, fn_body const&) = default;
