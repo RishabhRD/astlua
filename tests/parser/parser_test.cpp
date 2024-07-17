@@ -380,3 +380,9 @@ test("block_parser") {
                   ast::last_stat{ast::return_stat()}),
        9);
 }
+
+test("fn_body_parser") {
+  pass("()end",
+       {token::symbol::LPAREN, token::symbol::RPAREN, token::keyword::END},
+       fn_body_parser, ast::fn_body{}, 3);
+}

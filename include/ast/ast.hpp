@@ -218,7 +218,7 @@ struct vararg {
 
 struct name_param_list {
   list_1<std::string> args;
-  bool has_vararg;
+  bool has_vararg = false;
 
   friend bool operator==(name_param_list const&,
                          name_param_list const&) = default;

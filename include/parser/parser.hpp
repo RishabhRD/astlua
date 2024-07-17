@@ -171,12 +171,12 @@ inline auto vararg_param_list_parser = transform(
 inline auto param_list_parser =
     choice<ast::param_list>(name_param_list_parser, vararg_param_list_parser);
 
-// inline auto fn_body_parser = sequence(
-//     [](auto, auto params, auto, auto block, auto) {
-//       return ast::fn_body{std::move(params), std::move(block)};
-//     },
-//     skip(token::symbol::LPAREN), maybe(param_list_parser),
-//     skip(token::symbol::RPAREN), block_parser, skip(token::keyword::END));
+inline auto fn_body_parser = sequence(
+    [](auto, auto params, auto, auto block, auto) {
+      return ast::fn_body{std::move(params), std::move(block)};
+    },
+    skip(token::symbol::LPAREN), maybe(param_list_parser),
+    skip(token::symbol::RPAREN), block_parser, skip(token::keyword::END));
 
 namespace __parser_details {
 inline auto expr_parser_impl =
