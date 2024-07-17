@@ -294,8 +294,8 @@ struct while_stat {
 };
 
 struct repeat_stat {
-  expr condition;
   block body;
+  expr condition;
 
   friend bool operator==(repeat_stat const&, repeat_stat const&) = default;
 };
@@ -334,6 +334,7 @@ struct for_range_stat {
 struct for_in_stat {
   list_1<std::string> vars;
   list_1<expr> exprs;
+  block body;
   friend bool operator==(for_in_stat const&, for_in_stat const&) = default;
 };
 

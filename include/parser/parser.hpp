@@ -182,12 +182,87 @@ inline auto fn_parser =
     sequence([](auto, auto body) { return ast::fn(std::move(body)); },
              skip(token::keyword::FUNCTION), fn_body_parser);
 
+inline auto do_stat_parser = sequence(
+    [](auto, auto block, auto) { return ast::do_stat{std::move(block)}; },
+    skip(token::keyword::DO), block_parser, skip(token::keyword::END));
+
+inline auto while_stat_parser = sequence(
+    [](auto, auto exp, auto, auto block, auto) {
+      return ast::while_stat{std::move(exp), std::move(block)};
+    },
+    skip(token::keyword::WHILE), expr_parser, skip(token::keyword::DO),
+    block_parser, skip(token::keyword::END));
+
+inline auto repeat_stat_parser = sequence(
+    [](auto, auto block, auto, auto exp) {
+      return ast::repeat_stat{std::move(block), std::move(exp)};
+    },
+    skip(token::keyword::REPEAT), block_parser, skip(token::keyword::UNTIL),
+    expr_parser);
+
+// inline auto elseif_code_parser = sequence(
+//     [](auto, auto exp, auto, auto block) {
+//       return ast::elseif_code(std::move(exp), std::move(block));
+//     },
+//     skip(token::keyword::ELSEIF), expr_parser, skip(token::keyword::THEN),
+//     block_parser);
+//
+// inline auto else_code_parser =
+//     sequence([](auto, auto block) { return ast::else_code{std::move(block)}; },
+//              skip(token::keyword::ELSE), block_parser);
+//
+// inline auto if_stat_parser = sequence(
+//     [](auto, auto expr, auto, auto block, auto else_if, auto else_, auto) {
+//       return ast::if_stat{std::move(expr), std::move(block), std::move(else_if),
+//                           std::move(else_)};
+//     },
+//     skip(token::keyword::IF), expr_parser, skip(token::keyword::THEN),
+//     block_parser, zero_or_more(elseif_code_parser), maybe(else_code_parser));
+
+inline auto for_range_stat_parser = sequence(
+    [](auto, auto name, auto, auto start, auto, auto end, auto step, auto,
+       auto block, auto) {
+      return ast::for_range_stat{std::move(name), std::move(start),
+                                 std::move(end), std::move(step),
+                                 std::move(block)};
+    },
+    skip(token::keyword::FOR), name_parser, skip(token::symbol::EQ),
+    expr_parser, skip(token::symbol::COMMA), expr_parser,
+    maybe(snd(skip(token::symbol::COMMA), expr_parser)),
+    skip(token::keyword::DO), block_parser, skip(token::keyword::END));
+
+inline auto for_in_stat_parser = sequence(
+    [](auto, auto names, auto, auto exprs, auto, auto block, auto) {
+      return ast::for_in_stat{std::move(names), std::move(exprs),
+                              std::move(block)};
+    },
+    skip(token::keyword::FOR), name_list_parser, skip(token::keyword::IN),
+    expr_list_parser, skip(token::keyword::DO), block_parser,
+    skip(token::keyword::END));
+
+inline auto fn_decl_stat_parser = sequence(
+    [](auto, auto fn_name, auto fn_body) {
+      return ast::fn_decl_stat{std::move(fn_name), std::move(fn_body)};
+    },
+    skip(token::keyword::FUNCTION), fn_name_parser, fn_body_parser);
+
+inline auto local_fn_decl_stat_parser = sequence(
+    [](auto, auto, auto fn_name, auto fn_body) {
+      return ast::local_fn_decl_stat{std::move(fn_name), std::move(fn_body)};
+    },
+    skip(token::keyword::LOCAL), skip(token::keyword::FUNCTION), name_parser,
+    fn_body_parser);
+
 namespace __parser_details {
 inline auto expr_parser_impl =
     choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,
                       false_parser, vararg_parser, table_parser, fn_parser);
 
-inline auto stat_parser_impl = choice<ast::statement>(var_decl_stat_parser);
+// TODO: if is not working well
+inline auto stat_parser_impl = choice<ast::statement>(
+    do_stat_parser, while_stat_parser, repeat_stat_parser,
+    for_range_stat_parser, for_in_stat_parser, fn_decl_stat_parser,
+    local_fn_decl_stat_parser, var_decl_stat_parser);
 }  // namespace __parser_details
 
 template <std::forward_iterator Iter>

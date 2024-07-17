@@ -393,3 +393,8 @@ test("fn_parser") {
         token::keyword::END},
        fn_parser, ast::fn(ast::fn_body{}), 4);
 }
+
+test("dummy") {
+  std::vector<token::token_info> t;
+  stat_parser(std::begin(t), std::end(t));
+}

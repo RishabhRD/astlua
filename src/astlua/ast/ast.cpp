@@ -352,7 +352,7 @@ std::ostream& operator<<(std::ostream& os, for_range_stat const& x) {
 
 std::ostream& operator<<(std::ostream& os, for_in_stat const& x) {
   os << "for_in{vars: " << x.vars;
-  os << ", exprs: " << x.exprs << "}";
+  os << ", exprs: " << x.exprs << ", body: " << x.body << "}";
   return os;
 }
 

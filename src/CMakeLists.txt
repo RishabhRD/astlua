@@ -1,5 +1,5 @@
 file(GLOB_RECURSE src_list "../src/astlua/*.cpp")
-add_executable(astlua ${src_list} ${src_list} main.cpp)
+add_executable(astlua ${src_list} main.cpp)
 target_include_directories(astlua SYSTEM PRIVATE ../lib)
 target_include_directories(astlua PRIVATE ../include)
 target_link_libraries(astlua PRIVATE
