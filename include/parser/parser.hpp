@@ -178,10 +178,14 @@ inline auto fn_body_parser = sequence(
     skip(token::symbol::LPAREN), maybe(param_list_parser),
     skip(token::symbol::RPAREN), block_parser, skip(token::keyword::END));
 
+inline auto fn_parser =
+    sequence([](auto, auto body) { return ast::fn(std::move(body)); },
+             skip(token::keyword::FUNCTION), fn_body_parser);
+
 namespace __parser_details {
 inline auto expr_parser_impl =
     choice<ast::expr>(number_parser, string_parser, nil_parser, true_parser,
-                      false_parser, vararg_parser, table_parser);
+                      false_parser, vararg_parser, table_parser, fn_parser);
 
 inline auto stat_parser_impl = choice<ast::statement>(var_decl_stat_parser);
 }  // namespace __parser_details

@@ -386,3 +386,10 @@ test("fn_body_parser") {
        {token::symbol::LPAREN, token::symbol::RPAREN, token::keyword::END},
        fn_body_parser, ast::fn_body{}, 3);
 }
+
+test("fn_parser") {
+  pass("function()end",
+       {token::keyword::FUNCTION, token::symbol::LPAREN, token::symbol::RPAREN,
+        token::keyword::END},
+       fn_parser, ast::fn(ast::fn_body{}), 4);
+}
